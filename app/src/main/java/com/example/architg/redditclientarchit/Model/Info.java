@@ -1,0 +1,32 @@
+package com.example.architg.redditclientarchit.Model;
+
+import com.google.gson.annotations.SerializedName;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import lombok.Getter;
+
+/**
+ * Created by archit.g on 16/08/17.
+ */
+
+public class Info {
+    public class Data{
+        public class FeedResponse {
+            @SerializedName("data")
+            private Post post;
+            public Post getPost(){
+                return post;
+            }
+        }
+        @Getter
+        @SerializedName("children") private List<FeedResponse> feedResponses;
+
+    }
+    private Data data;
+    public List<Data.FeedResponse> getFeedResponse() {
+        return data.feedResponses;
+
+    }
+}
