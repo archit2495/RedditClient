@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 int pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition();
                 if (pastVisibleItems + visibleItemCount >= totalItemCount) {
                     loadData();
-                    loadSubredditDataIntoFeed();
+//                    loadSubredditDataIntoFeed();
                 }
             }
         };

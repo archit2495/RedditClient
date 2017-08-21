@@ -90,8 +90,10 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedVi
     }
 
     private void loadImage(ImageView imageView,String url){
+        RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_report_problem);
         Glide.with(mContext)
                 .load(url)
+                .apply(requestOptions)
                 .into(imageView);
     }
     private void loadImageRounded(ImageView imageView,String url){
