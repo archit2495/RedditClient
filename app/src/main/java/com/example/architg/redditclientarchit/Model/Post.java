@@ -1,5 +1,9 @@
 package com.example.architg.redditclientarchit.Model;
 
+import android.util.Log;
+
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 import lombok.Getter;
@@ -19,8 +23,9 @@ public class Post {
             private Image source;
         }
 
-        private List<Type> images;
+        public List<Type> images;
         public String getImageUrl(){
+            Log.i("hello",images.get(0).toString());
             return images.get(0).getSource().getUrl();
         }
     }
@@ -38,4 +43,8 @@ public class Post {
     private String subreddit_name_prefixed;
     @Getter
     private String domain;
+    @Getter @SerializedName("is_self")
+    private Boolean IsSelf;
+    @Getter @SerializedName("selftext_html")
+    private String SelfTextHTML;
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by archit.g on 16/08/17.
@@ -19,6 +20,8 @@ public class Info {
             public Post getPost(){
                 return post;
             }
+            @Getter @Setter
+            private String imageURL;
         }
         @Getter
         @SerializedName("children") private List<FeedResponse> feedResponses;
@@ -29,4 +32,6 @@ public class Info {
         return data.feedResponses;
 
     }
+    @Getter
+    private String after;
 }
