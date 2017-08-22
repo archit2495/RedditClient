@@ -16,6 +16,6 @@ import retrofit2.http.Query;
 public interface ApiInterface {
     @GET("/hot.json")
     Call<Info> getInfo(@Query("after") String afterID);
-    @GET("/{type}/about.json")
+    @GET("/r/{type}/about.json")
     Call<SubredditInfo> getSubredditInfo(@Path("type") String type);
 }

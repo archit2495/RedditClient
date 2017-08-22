@@ -25,13 +25,15 @@ public class Info {
         }
         @Getter
         @SerializedName("children") private List<FeedResponse> feedResponses;
+        @Getter
+        private String after;
 
     }
+    @Getter
     private Data data;
     public List<Data.FeedResponse> getFeedResponse() {
         return data.feedResponses;
 
     }
-    @Getter
-    private String after;
+
 }

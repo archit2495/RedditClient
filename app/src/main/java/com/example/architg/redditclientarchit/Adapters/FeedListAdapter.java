@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.Post;
@@ -31,10 +32,12 @@ import static com.example.architg.redditclientarchit.R.mipmap.ic_launcher;
 public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedViewHolder> {
     private List<Info.Data.FeedResponse> mFeedResponseList;
     private Context mContext;
-    public  class FeedViewHolder extends RecyclerView.ViewHolder{
-        public TextView name,time,heading,contentText;
-        public ImageView sourceImage,contentImage;
-        public FeedViewHolder(View view){
+
+    public class FeedViewHolder extends RecyclerView.ViewHolder {
+        public TextView name, time, heading, contentText;
+        public ImageView sourceImage, contentImage;
+
+        public FeedViewHolder(View view) {
             super(view);
             name = view.findViewById(R.id.name);
             time = view.findViewById(R.id.time);
@@ -44,43 +47,45 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedVi
             contentText = view.findViewById(R.id.contentText);
         }
     }
-    public FeedListAdapter(List<Info.Data.FeedResponse> feedResponseList, Context context){
+
+    public FeedListAdapter(List<Info.Data.FeedResponse> feedResponseList, Context context) {
         mFeedResponseList = feedResponseList;
         mContext = context;
     }
+
     @Override
-    public FeedViewHolder onCreateViewHolder(ViewGroup parent,int viewType){
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_single_item,parent,false);
+    public FeedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_single_item, parent, false);
         return new FeedViewHolder(itemView);
     }
+
     @Override
-    public void onBindViewHolder(FeedViewHolder feedViewHolder,int position){
+    public void onBindViewHolder(FeedViewHolder feedViewHolder, int position) {
         Info.Data.FeedResponse feedResponse = mFeedResponseList.get(position);
         Post post = feedResponse.getPost();
         feedViewHolder.heading.setText(post.getTitle());
         String time = (String) DateUtils.getRelativeTimeSpanString(post.getCreated());
         feedViewHolder.time.setText(time);
         feedViewHolder.name.setText(post.getSubreddit_name_prefixed());
-       // Log.i("archit",post.getSubreddit_name_prefixed());
-        if(post.getIsSelf() == false) {
+        if (post.getIsSelf() == false && post.getPreview() != null) {
             loadImage(feedViewHolder.contentImage, post.getPreview().getImageUrl());
             feedViewHolder.contentText.setVisibility(View.GONE);
-        }else{
+        } else if (post.getIsSelf()) {
             String text = post.getSelfTextHTML();
-            if(text != null) {
+            if (text != null) {
                 feedViewHolder.contentText.setText(Html.fromHtml(text));
-            }else{
+            } else {
                 feedViewHolder.contentText.setVisibility(View.GONE);
-                Log.i("archit",post.getTitle());
+                Log.i("archit", post.getTitle());
             }
             feedViewHolder.contentImage.setVisibility(View.GONE);
         }
-        if(feedResponse.getImageURL() == null){
-            Drawable  drawable = mContext.getResources().getDrawable(R.drawable.ic_perm_identity);
+        if (feedResponse.getImageURL() == null) {
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_perm_identity);
             feedViewHolder.sourceImage.setImageDrawable(drawable);
 
-        }else{
-            loadImageRounded(feedViewHolder.sourceImage,feedResponse.getImageURL());
+        } else {
+            loadImageRounded(feedViewHolder.sourceImage, feedResponse.getImageURL());
         }
     }
 
@@ -89,17 +94,21 @@ public class FeedListAdapter extends RecyclerView.Adapter<FeedListAdapter.FeedVi
         return mFeedResponseList.size();
     }
 
-    private void loadImage(ImageView imageView,String url){
-        RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_report_problem);
+    private void loadImage(ImageView imageView, String url) {
+        RequestOptions requestOptions = new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_report_problem);
+
         Glide.with(mContext)
                 .load(url)
                 .apply(requestOptions)
                 .into(imageView);
     }
-    private void loadImageRounded(ImageView imageView,String url){
-       RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_perm_identity).circleCrop();
-       Glide.with(mContext)
-               .load(url)
-               .apply(requestOptions).into(imageView);
+
+    private void loadImageRounded(ImageView imageView, String url) {
+        RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_perm_identity).circleCrop();
+        Glide.with(mContext)
+                .load(url)
+                .apply(requestOptions).into(imageView);
     }
 }

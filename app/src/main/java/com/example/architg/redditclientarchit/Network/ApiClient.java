@@ -3,12 +3,8 @@ package com.example.architg.redditclientarchit.Network;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Created by archit.g on 16/08/17.
- */
-
 public class ApiClient {
-    public static final String BASE_URL = "http://www.reddit.com";
+    public static final String BASE_URL = "https://www.reddit.com/";
     public static Retrofit retrofit = null;
     public static Retrofit getClient(){
         if (retrofit == null){
