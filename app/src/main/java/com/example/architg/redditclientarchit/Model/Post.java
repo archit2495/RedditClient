@@ -25,7 +25,6 @@ public class Post {
 
         public List<Type> images;
         public String getImageUrl(){
-            Log.i("hello",images.get(0).toString());
             return images.get(0).getSource().getUrl();
         }
     }
@@ -47,4 +46,6 @@ public class Post {
     private Boolean IsSelf;
     @Getter @SerializedName("selftext_html")
     private String SelfTextHTML;
+    @Getter
+    private String id;
 }

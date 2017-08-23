@@ -1,0 +1,139 @@
+package com.example.architg.redditclientarchit.Adapters;
+
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
+import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
+import com.example.architg.redditclientarchit.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by archit.g on 11/08/17.
+ */
+
+public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAdapter.FeedViewHolder> {
+    private List<RedditDisplayPost> mRedditDisplayPostsList;
+    private Context mContext;
+    private int startIndex = 0;
+
+    public class FeedViewHolder extends RecyclerView.ViewHolder {
+        public TextView name, time, heading, contentText;
+        public ImageView sourceImage, contentImage;
+        public FrameLayout contentImageFrame;
+        public ProgressBar contentImageProgress;
+        public FeedViewHolder(View view) {
+            super(view);
+            name = view.findViewById(R.id.name);
+            time = view.findViewById(R.id.time);
+            heading = view.findViewById(R.id.heading);
+            sourceImage = view.findViewById(R.id.sourceImage);
+            contentImage = view.findViewById(R.id.contentImage);
+            contentText = view.findViewById(R.id.contentText);
+            contentImageFrame = view.findViewById(R.id.contentImageFrame);
+            contentImageProgress = view.findViewById(R.id.progress);
+        }
+    }
+
+    public RedditPostListAdapter(Context context) {
+        mRedditDisplayPostsList = new ArrayList<>();
+        mContext = context;
+    }
+
+    @Override
+    public FeedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_single_item, parent, false);
+        return new FeedViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(FeedViewHolder feedViewHolder, int position) {
+        RedditDisplayPost redditDisplayPost = mRedditDisplayPostsList.get(position);
+        feedViewHolder.heading.setText(redditDisplayPost.getHeading());
+        feedViewHolder.time.setText(redditDisplayPost.getTime());
+        feedViewHolder.name.setText(redditDisplayPost.getName());
+        if (redditDisplayPost.getSourceImage() == null) {
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_perm_identity);
+            feedViewHolder.sourceImage.setImageDrawable(drawable);
+        } else {
+            loadImageRounded(feedViewHolder.sourceImage, redditDisplayPost.getSourceImage());
+        }
+        if (redditDisplayPost.getContentImage() != null) {
+            feedViewHolder.contentImageFrame.setVisibility(View.VISIBLE);
+            loadImage(feedViewHolder.contentImage,feedViewHolder.contentImageProgress, redditDisplayPost.getContentImage());
+        }
+        if (redditDisplayPost.getSelfHelpText() != null){
+            feedViewHolder.contentText.setVisibility(View.VISIBLE);
+            feedViewHolder.contentText.setText(Html.fromHtml(redditDisplayPost.getSelfHelpText()));     //bug to fix html rendering
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mRedditDisplayPostsList.size();
+    }
+
+    private void loadImage(final ImageView imageView, final ProgressBar progressBar, final String url) {
+        RequestOptions requestOptions = new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(mContext)
+                .load(url)
+                .apply(requestOptions)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        Log.i("gere",url);
+                        progressBar.setVisibility(View.GONE);
+                        imageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_report_problem));
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        progressBar.setVisibility(View.GONE);
+                        return false;
+                    }
+                })
+                .into(imageView);
+    }
+
+    private void loadImageRounded(ImageView imageView, String url) {
+        RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_perm_identity).circleCrop();
+        Glide.with(mContext)
+                .load(url)
+                .apply(requestOptions).into(imageView);
+    }
+    public void update(List<RedditDisplayPost> redditDisplayPosts){
+        int endIndex = startIndex + redditDisplayPosts.size();
+        mRedditDisplayPostsList.addAll(redditDisplayPosts);
+        notifyItemRangeChanged(startIndex,redditDisplayPosts.size());
+    }
+    public void updateSourceImage(int startIndex,int size){
+        notifyItemRangeChanged(startIndex,size);
+    }
+    public List<RedditDisplayPost> getmRedditDisplayPostsList(){
+        return mRedditDisplayPostsList;
+    }
+    public int getListSize(){
+        return mRedditDisplayPostsList.size();
+    }
+}

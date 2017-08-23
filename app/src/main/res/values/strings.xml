@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RedditClientArchit</string>
+    <string name="app_name">Reddit</string>
     <string name="share">share</string>
     <string name="comments">Comments</string>
     <string name="vote">Vote</string>

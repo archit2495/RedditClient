@@ -1,19 +1,20 @@
-package com.example.architg.redditclientarchit.Activity;
+package com.example.architg.redditclientarchit.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.example.architg.redditclientarchit.Adapters.FeedListAdapter;
+import com.example.architg.redditclientarchit.Adapters.RedditPostListAdapter;
 import com.example.architg.redditclientarchit.Model.Info;
+import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
 import com.example.architg.redditclientarchit.Model.SubredditInfo;
 import com.example.architg.redditclientarchit.Network.ApiClient;
 import com.example.architg.redditclientarchit.Network.ApiInterface;
 import com.example.architg.redditclientarchit.R;
+import com.example.architg.redditclientarchit.Utility.Utils;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import kotlin.internal.ProgressionUtilKt;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,12 +35,11 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     String after = "";
     RecyclerView mRecyclerView;
-    List<Info.Data.FeedResponse> mFeedResponses;
     ApiInterface mApiInterface;
     String url;
     LinearLayoutManager mLayoutManager;
     int mCurrentIndex = 0;
-    FeedListAdapter mFeedListAdapter;
+    RedditPostListAdapter mRedditPostListAdapter;
     Boolean mIsLoading = false;
     ProgressDialog mProgress;
     @Override
@@ -50,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         mApiInterface = ApiClient.getClient().create(ApiInterface.class);
         mRecyclerView = (RecyclerView)findViewById(R.id.feed_recycler_view);
         mLayoutManager = new LinearLayoutManager(this);
-        mFeedResponses = new ArrayList<Info.Data.FeedResponse>() ;
         mProgress = new ProgressDialog(this);
         mProgress.setTitle("Loading");
         mProgress.setMessage("Wait while loading...");
@@ -63,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView,dx,dy);
                 int visibleItemCount = mLayoutManager.getChildCount();
-                int totalItemCount = mFeedResponses.size();
+                int totalItemCount = mRedditPostListAdapter.getListSize();
                 int pastVisibleItems = mLayoutManager.findLastVisibleItemPosition();
                 if (pastVisibleItems == totalItemCount - 1 && !mIsLoading) {
                     mProgress.show();
@@ -74,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         mRecyclerView.addOnScrollListener(mScrollListener);
+        mRedditPostListAdapter = new RedditPostListAdapter(getApplicationContext());
+        mRecyclerView.setAdapter(mRedditPostListAdapter);
         loadData();
     }
     private Future<String> loadSubredditData(String path){
@@ -100,20 +100,10 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<Info>() {
             @Override
             public void onResponse(Call<Info> call, Response<Info> response) {
-                if(mFeedResponses.size() == 0) {
-                    mFeedResponses = response.body().getFeedResponse();
-                    after = response.body().getData().getAfter();
-                    mFeedListAdapter = new FeedListAdapter(mFeedResponses, getApplicationContext());
-                    mRecyclerView.setAdapter(mFeedListAdapter);
-                }else{
-                    List<Info.Data.FeedResponse> feedResponses = response.body().getFeedResponse();
-                    for(Info.Data.FeedResponse feedResponse:feedResponses){
-                        mFeedResponses.add(feedResponse);
-                    }
-                    after = response.body().getData().getAfter();
-                    mFeedListAdapter.notifyDataSetChanged();
-                    mProgress.dismiss();
-                }
+                List<RedditDisplayPost> redditDisplayPosts = Utils.convertFeedResposeListToRedditDisplayPostList(response.body().getFeedResponse());
+                after = response.body().getData().getAfter();
+                mRedditPostListAdapter.update(redditDisplayPosts);
+                mProgress.dismiss();
                 loadSubredditDataIntoFeed();
                 mIsLoading = false;
             }
@@ -126,25 +116,27 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void loadSubredditDataIntoFeed(){
-        for(;mCurrentIndex < mFeedResponses.size();mCurrentIndex++){
-            final Info.Data.FeedResponse feedResponse = mFeedResponses.get(mCurrentIndex);
-            Futures.addCallback((ListenableFuture<String>) loadSubredditData(feedResponse.getPost().getSubreddit_name_prefixed().substring(2)), new FutureCallback<String>() {
+        List<RedditDisplayPost> redditDisplayPosts = mRedditPostListAdapter.getmRedditDisplayPostsList();
+        int index = mCurrentIndex;
+        for(;mCurrentIndex < redditDisplayPosts.size();mCurrentIndex++){
+            final RedditDisplayPost redditDisplayPost = redditDisplayPosts.get(mCurrentIndex);
+            Futures.addCallback((ListenableFuture<String>) loadSubredditData(redditDisplayPost.getName().substring(2)), new FutureCallback<String>() {
 
                 @Override
                 public void onSuccess(String result) {
-                    if(result.length() > 0) {
-                        feedResponse.setImageURL(result);
+                    if(result != null && result.length() > 0) {
+                        redditDisplayPost.setSourceImage(result);
                     }else{
-                        feedResponse.setImageURL(null);
+                        redditDisplayPost.setSourceImage(null);
                     }
                 }
 
                 @Override
                 public void onFailure(Throwable t) {
-                    feedResponse.setImageURL(null);
+                    redditDisplayPost.setSourceImage(null);
                 }
             });
         }
-        mFeedListAdapter.notifyDataSetChanged();
+        mRedditPostListAdapter.updateSourceImage(index,redditDisplayPosts.size() - index);
     }
 }
