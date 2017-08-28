@@ -36,7 +36,7 @@ public class Post {
     private int score;
     @Getter
     private int num_comments;
-    @Getter
+    @Getter @SerializedName("created_utc")
     private long created;
     @Getter
     private String subreddit_name_prefixed;

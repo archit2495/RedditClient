@@ -41,6 +41,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         public ImageView sourceImage, contentImage;
         public FrameLayout contentImageFrame;
         public ProgressBar contentImageProgress;
+
         public FeedViewHolder(View view) {
             super(view);
             name = view.findViewById(R.id.name);
@@ -68,6 +69,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     @Override
     public void onBindViewHolder(FeedViewHolder feedViewHolder, int position) {
         RedditDisplayPost redditDisplayPost = mRedditDisplayPostsList.get(position);
+        initPostHolder(feedViewHolder);
         feedViewHolder.heading.setText(redditDisplayPost.getHeading());
         feedViewHolder.time.setText(redditDisplayPost.getTime());
         feedViewHolder.name.setText(redditDisplayPost.getName());
@@ -79,14 +81,20 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         }
         if (redditDisplayPost.getContentImage() != null) {
             feedViewHolder.contentImageFrame.setVisibility(View.VISIBLE);
-            loadImage(feedViewHolder.contentImage,feedViewHolder.contentImageProgress, redditDisplayPost.getContentImage());
+            loadImage(feedViewHolder.contentImage, feedViewHolder.contentImageProgress, redditDisplayPost.getContentImage());
         }
-        if (redditDisplayPost.getSelfHelpText() != null){
+        if (redditDisplayPost.getSelfHelpText() != null) {
             feedViewHolder.contentText.setVisibility(View.VISIBLE);
-            feedViewHolder.contentText.setText(Html.fromHtml(redditDisplayPost.getSelfHelpText()));     //bug to fix html rendering
+           String text = redditDisplayPost.getSelfHelpText();
+           text = text.replaceAll("&lt;","<");
+           text= text.replaceAll("&gt;",">");
+            feedViewHolder.contentText.setText(Html.fromHtml(text));     //bug to fix html rendering
         }
     }
-
+    private void initPostHolder(FeedViewHolder feedViewHolder){
+        feedViewHolder.contentText.setVisibility(View.GONE);
+        feedViewHolder.contentImage.setVisibility(View.GONE);
+    }
     @Override
     public int getItemCount() {
         return mRedditDisplayPostsList.size();
@@ -101,9 +109,9 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.i("gere",url);
-                        progressBar.setVisibility(View.GONE);
                         imageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_report_problem));
+                        progressBar.setVisibility(View.GONE);
+
                         return true;
                     }
 
@@ -122,18 +130,24 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                 .load(url)
                 .apply(requestOptions).into(imageView);
     }
-    public void update(List<RedditDisplayPost> redditDisplayPosts){
-        int endIndex = startIndex + redditDisplayPosts.size();
-        mRedditDisplayPostsList.addAll(redditDisplayPosts);
-        notifyItemRangeChanged(startIndex,redditDisplayPosts.size());
+
+    public void update(List<RedditDisplayPost> redditDisplayPosts) {
+        for (int i = 0; i < redditDisplayPosts.size(); i++) {                       //ask about adding in front of the list
+            mRedditDisplayPostsList.add(i, redditDisplayPosts.get(i));
+        }
+        notifyItemRangeChanged(0, redditDisplayPosts.size());
     }
-    public void updateSourceImage(int startIndex,int size){
-        notifyItemRangeChanged(startIndex,size);
+
+    public void updateSourceImage(String imageUrl, int index) {
+        mRedditDisplayPostsList.get(index).setSourceImage(imageUrl);
+        notifyItemChanged(index);
     }
-    public List<RedditDisplayPost> getmRedditDisplayPostsList(){
-        return mRedditDisplayPostsList;
+
+    public List<RedditDisplayPost> getmRedditDisplayPostsList(int size) {
+        return mRedditDisplayPostsList.subList(0, size);
     }
-    public int getListSize(){
+
+    public int getListSize() {
         return mRedditDisplayPostsList.size();
     }
 }
