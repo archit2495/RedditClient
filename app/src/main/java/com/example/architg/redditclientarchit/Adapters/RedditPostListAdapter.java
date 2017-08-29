@@ -88,7 +88,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
            String text = redditDisplayPost.getSelfHelpText();
            text = text.replaceAll("&lt;","<");
            text= text.replaceAll("&gt;",">");
-            feedViewHolder.contentText.setText(Html.fromHtml(text));     //bug to fix html rendering
+            feedViewHolder.contentText.setText(Html.fromHtml(text));
         }
     }
     private void initPostHolder(FeedViewHolder feedViewHolder){
@@ -131,11 +131,13 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                 .apply(requestOptions).into(imageView);
     }
 
-    public void update(List<RedditDisplayPost> redditDisplayPosts) {
+    public int update(List<RedditDisplayPost> redditDisplayPosts) {
+        int start = mRedditDisplayPostsList.size();
         for (int i = 0; i < redditDisplayPosts.size(); i++) {                       //ask about adding in front of the list
-            mRedditDisplayPostsList.add(i, redditDisplayPosts.get(i));
+            mRedditDisplayPostsList.add(redditDisplayPosts.get(i));
         }
-        notifyItemRangeChanged(0, redditDisplayPosts.size());
+        notifyItemRangeChanged(start, redditDisplayPosts.size());
+        return start;
     }
 
     public void updateSourceImage(String imageUrl, int index) {
@@ -143,9 +145,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         notifyItemChanged(index);
     }
 
-    public List<RedditDisplayPost> getmRedditDisplayPostsList(int size) {
-        return mRedditDisplayPostsList.subList(0, size);
-    }
+
 
     public int getListSize() {
         return mRedditDisplayPostsList.size();

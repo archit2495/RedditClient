@@ -13,24 +13,31 @@ import lombok.Setter;
  */
 
 public class Info {
-    public class Data{
+    public class Data {
         public class FeedResponse {
             @SerializedName("data")
             private Post post;
-            public Post getPost(){
+
+            public Post getPost() {
                 return post;
             }
-            @Getter @Setter
+
+            @Getter
+            @Setter
             private String imageURL;
         }
+
         @Getter
-        @SerializedName("children") private List<FeedResponse> feedResponses;
+        @SerializedName("children")
+        private List<FeedResponse> feedResponses;
         @Getter
         private String after;
 
     }
+
     @Getter
     private Data data;
+
     public List<Data.FeedResponse> getFeedResponse() {
         return data.feedResponses;
 
