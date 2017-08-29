@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(getFragment("new"),"New");
         adapter.addFragment(getFragment("rising"),"Rising");
         adapter.addFragment(getFragment("top"),"Top");
+        adapter.addFragment(getFragment("controversial"),"Controversial");
         mViewPager.setAdapter(adapter);
     }
 }
