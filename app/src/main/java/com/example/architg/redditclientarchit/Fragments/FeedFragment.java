@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,15 +36,13 @@ public class FeedFragment extends Fragment {
     String mType;
     String after = "";
     RecyclerView mRecyclerView;
-    String url;
     LinearLayoutManager mLayoutManager;
-    int mCurrentIndex = 0;
     RedditPostListAdapter mRedditPostListAdapter;
     Boolean mIsLoading = false;
     ProgressDialog mProgress;
     AppDatabase db;
     Loader mLoader;
-
+    SwipeRefreshLayout mSwipeRefreshLayout;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -88,6 +87,19 @@ public class FeedFragment extends Fragment {
         };
         mRecyclerView.addOnScrollListener(mScrollListener);
         loadData();
+        mSwipeRefreshLayout = view.findViewById(R.id.swiperefresh);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        mRedditPostListAdapter.flush();
+                        after = "";
+                        loadData();
+                    }
+                }
+        );
+
     }
 
     Boolean isPageBeingLoaded() {
@@ -104,6 +116,7 @@ public class FeedFragment extends Fragment {
                 new FutureCallback<Info>() {
                     @Override
                     public void onSuccess(Info info) {
+                        mSwipeRefreshLayout.setRefreshing(false);
                         mProgress.dismiss();
                         mIsLoading = false;
                         List<RedditDisplayPost> redditDisplayPosts = Utils.convertFeedResposeListToRedditDisplayPostList(mContext, info.getFeedResponse());
@@ -114,7 +127,6 @@ public class FeedFragment extends Fragment {
 
                     @Override
                     public void onFailure(Throwable t) {
-                        Log.i("here",t.toString());
                     }
                 });
     }

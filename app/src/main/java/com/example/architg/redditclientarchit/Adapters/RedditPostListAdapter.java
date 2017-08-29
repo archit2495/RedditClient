@@ -144,9 +144,9 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         mRedditDisplayPostsList.get(index).setSourceImage(imageUrl);
         notifyItemChanged(index);
     }
-
-
-
+    public void flush(){
+        mRedditDisplayPostsList.clear();
+    }
     public int getListSize() {
         return mRedditDisplayPostsList.size();
     }

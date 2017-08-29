@@ -20,6 +20,7 @@ public class Loader {
     public Loader(Context context){
         mContext = context;
     }
+
     public Future<Info> loadData(String type,String after){
         mApiInterface = ApiClient.getClient().create(ApiInterface.class);
         Call<Info> call = mApiInterface.getInfo(type,after);
