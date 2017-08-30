@@ -10,16 +10,22 @@ import lombok.Setter;
 /**
  * Created by archit.g on 23/08/17.
  */
- @Entity
 public class RedditDisplayPost {
-    @PrimaryKey
     private String id;
     private String name;
     private String heading;
     private String time;
-    @ColumnInfo(name = "content_image")
-    private String contentImage;
 
+    public String getContentImageThumbnail() {
+        return contentImageThumbnail;
+    }
+
+    public void setContentImageThumbnail(String contentImageThumbnail) {
+        this.contentImageThumbnail = contentImageThumbnail;
+    }
+
+    private String contentImageThumbnail;
+    private String contentImageDetail;
     public String getId() {
         return id;
     }
@@ -52,12 +58,12 @@ public class RedditDisplayPost {
         this.time = time;
     }
 
-    public String getContentImage() {
-        return contentImage;
+    public String getContentImageDetail() {
+        return contentImageThumbnail;
     }
 
-    public void setContentImage(String contentImage) {
-        this.contentImage = contentImage;
+    public void setContentImageDetail(String contentImageDetail) {
+        this.contentImageDetail = contentImageDetail;
     }
 
     public String getSourceImage() {
@@ -68,7 +74,6 @@ public class RedditDisplayPost {
         this.sourceImage = sourceImage;
     }
 
-    @ColumnInfo(name = "source_image")
     private String sourceImage;
 
     public String getSelfHelpText() {
@@ -79,16 +84,17 @@ public class RedditDisplayPost {
         this.selfHelpText = selfHelpText;
     }
 
-    @ColumnInfo(name = "self_help_text")
     private String selfHelpText;
-    public RedditDisplayPost(String id,String name,String time,String heading,String contentImage,String sourceImage,String selfHelpText){
+
+    public RedditDisplayPost(String id,String name,String time,String heading,String contentImageDetail,String contentImageThumbnail,String sourceImage,String selfHelpText){
         this.selfHelpText = selfHelpText;
-        this.contentImage = contentImage;
+        this.contentImageDetail = contentImageDetail;
         this.name = name;
         this.sourceImage = sourceImage;
         this.heading = heading;
         this.time = time;
         this.id = id;
+        this.contentImageThumbnail = contentImageThumbnail;
     }
 
 }

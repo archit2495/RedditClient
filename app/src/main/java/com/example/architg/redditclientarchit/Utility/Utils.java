@@ -17,13 +17,14 @@ public class Utils {
         String name = post.getSubreddit_name_prefixed();
         String heading = post.getTitle();
         String time = DateUtils.getRelativeTimeSpanString(post.getCreated()*1000l).toString();
-        String contentImage = null;
+        String contentImageDetail = null;
         if(post.getPreview() != null){
-            contentImage = post.getPreview().getImageUrl();
+            contentImageDetail = post.getPreview().getImageUrl();
         }
+        String contentImageThumbnail = post.getThumbnail();
         String sourceImage = feedResponse.getImageURL();
         String selfHelpText = post.getSelfTextHTML();
-        return new RedditDisplayPost(id,name,time,heading,contentImage,sourceImage,selfHelpText);
+        return new RedditDisplayPost(id,name,time,heading,contentImageDetail,contentImageDetail,sourceImage,selfHelpText);
     }
     public static List<RedditDisplayPost> convertFeedResposeListToRedditDisplayPostList(Context context, List<Info.Data.FeedResponse> feedResponses){
         List<RedditDisplayPost> redditDisplayPosts = new ArrayList<>();

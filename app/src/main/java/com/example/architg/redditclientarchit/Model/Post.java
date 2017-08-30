@@ -21,15 +21,20 @@ public class Post {
             }
             @Getter
             private Image source;
+            @Getter
+            private List<Image> resolutions;
         }
 
         public List<Type> images;
         public String getImageUrl(){
             return images.get(0).getSource().getUrl();
         }
+        public String getUrl(){return images.get(0).getResolutions().get(0).getUrl();}
     }
     @Getter
     private Preview preview;
+    @Getter
+    private String thumbnail;
     @Getter
     private String title;
     @Getter

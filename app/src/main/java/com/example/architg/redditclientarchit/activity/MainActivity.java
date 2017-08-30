@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setupViewPager();
         mTabLayout = findViewById(R.id.tabs);
         mTabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setOffscreenPageLimit(3);
+        //mViewPager.setOffscreenPageLimit();
     }
 
     private FeedFragment getFragment(String type) {

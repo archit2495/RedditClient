@@ -1,21 +1,17 @@
 package com.example.architg.redditclientarchit.Fragments;
 
 import android.app.ProgressDialog;
-import android.arch.persistence.room.Room;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.architg.redditclientarchit.Adapters.RedditPostListAdapter;
-import com.example.architg.redditclientarchit.Database.AppDatabase;
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
 import com.example.architg.redditclientarchit.Network.Loader;
@@ -40,7 +36,6 @@ public class FeedFragment extends Fragment {
     RedditPostListAdapter mRedditPostListAdapter;
     Boolean mIsLoading = false;
     ProgressDialog mProgress;
-    AppDatabase db;
     Loader mLoader;
     SwipeRefreshLayout mSwipeRefreshLayout;
     @Override
@@ -64,7 +59,6 @@ public class FeedFragment extends Fragment {
         mProgress.setTitle("Loading");
         mProgress.setMessage("Wait while loading...");
         mProgress.setCancelable(false);
-        //   db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "app-database").build();
         mRecyclerView.setLayoutManager(mLayoutManager);
         return view;
     }
@@ -148,6 +142,5 @@ public class FeedFragment extends Fragment {
             });
         }
 
-        // db.postDao().insertAll(mRedditPostListAdapter.getmRedditDisplayPostsList());
     }
 }

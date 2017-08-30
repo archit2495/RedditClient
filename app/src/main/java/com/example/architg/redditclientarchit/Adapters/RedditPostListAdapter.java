@@ -79,9 +79,9 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         } else {
             loadImageRounded(feedViewHolder.sourceImage, redditDisplayPost.getSourceImage());
         }
-        if (redditDisplayPost.getContentImage() != null) {
+        if (redditDisplayPost.getContentImageThumbnail() != null && !redditDisplayPost.getContentImageThumbnail().equals("self") && !redditDisplayPost.getContentImageThumbnail().equals("default")) {
             feedViewHolder.contentImageFrame.setVisibility(View.VISIBLE);
-            loadImage(feedViewHolder.contentImage, feedViewHolder.contentImageProgress, redditDisplayPost.getContentImage());
+            loadImage(feedViewHolder.contentImage, feedViewHolder.contentImageProgress, redditDisplayPost.getContentImageThumbnail());
         }
         if (redditDisplayPost.getSelfHelpText() != null) {
             feedViewHolder.contentText.setVisibility(View.VISIBLE);
@@ -93,7 +93,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     }
     private void initPostHolder(FeedViewHolder feedViewHolder){
         feedViewHolder.contentText.setVisibility(View.GONE);
-        feedViewHolder.contentImage.setVisibility(View.GONE);
+        feedViewHolder.contentImageFrame.setVisibility(View.GONE);
     }
     @Override
     public int getItemCount() {
@@ -101,6 +101,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     }
 
     private void loadImage(final ImageView imageView, final ProgressBar progressBar, final String url) {
+        Log.i("url",url);
         RequestOptions requestOptions = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(mContext)
