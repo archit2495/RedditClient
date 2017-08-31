@@ -15,7 +15,18 @@ public class RedditDisplayPost {
     private String name;
     private String heading;
     private String time;
+    private String contentImageThumbnail;
+    private String contentImageDetail;
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    private String url;
     public String getContentImageThumbnail() {
         return contentImageThumbnail;
     }
@@ -24,8 +35,6 @@ public class RedditDisplayPost {
         this.contentImageThumbnail = contentImageThumbnail;
     }
 
-    private String contentImageThumbnail;
-    private String contentImageDetail;
     public String getId() {
         return id;
     }
@@ -86,7 +95,8 @@ public class RedditDisplayPost {
 
     private String selfHelpText;
 
-    public RedditDisplayPost(String id,String name,String time,String heading,String contentImageDetail,String contentImageThumbnail,String sourceImage,String selfHelpText){
+    public RedditDisplayPost(String id,String name,String time,String heading,String contentImageDetail,String contentImageThumbnail,String sourceImage,String selfHelpText,String url){
+        this.url = url;
         this.selfHelpText = selfHelpText;
         this.contentImageDetail = contentImageDetail;
         this.name = name;

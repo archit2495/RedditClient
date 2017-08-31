@@ -1,10 +1,13 @@
 package com.example.architg.redditclientarchit.Network;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.Toast;
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.SubredditInfo;
 import com.google.common.util.concurrent.SettableFuture;
+import com.google.gson.Gson;
+
 import java.util.concurrent.Future;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,6 +31,11 @@ public class Loader {
         call.enqueue(new Callback<Info>() {
             @Override
             public void onResponse(@NonNull Call<Info> call, @NonNull Response<Info> response) {
+                Gson gson = new Gson();
+                String stringInfo =  gson.toJson(response.body());
+                Log.i("json",stringInfo);
+                Info info = gson.fromJson(stringInfo,Info.class);
+                Log.i("json",info.getData().getAfter());
                 if(response.body() != null && response.body().getFeedResponse() != null && !response.body().getFeedResponse().isEmpty()){
                     future.set(response.body());
                 } else {

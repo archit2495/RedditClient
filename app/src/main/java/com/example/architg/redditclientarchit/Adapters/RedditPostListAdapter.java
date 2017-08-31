@@ -1,8 +1,12 @@
 package com.example.architg.redditclientarchit.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -21,11 +25,15 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.architg.redditclientarchit.Fragments.ImageDialogFragment;
 import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
 import com.example.architg.redditclientarchit.R;
+import com.example.architg.redditclientarchit.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.core.Main;
 
 /**
  * Created by archit.g on 11/08/17.
@@ -34,7 +42,7 @@ import java.util.List;
 public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAdapter.FeedViewHolder> {
     private List<RedditDisplayPost> mRedditDisplayPostsList;
     private Context mContext;
-    private int startIndex = 0;
+    private FragmentListener fragmentListener;
 
     public class FeedViewHolder extends RecyclerView.ViewHolder {
         public TextView name, time, heading, contentText;
@@ -52,11 +60,29 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
             contentText = view.findViewById(R.id.contentText);
             contentImageFrame = view.findViewById(R.id.contentImageFrame);
             contentImageProgress = view.findViewById(R.id.progress);
+            contentImageFrame.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    Log.i("clicked",position + "");
+                    RedditDisplayPost redditDisplayPost = mRedditDisplayPostsList.get(position);
+                    fragmentListener.showDialogFragment(redditDisplayPost.getContentImageThumbnail());
+                }
+            });
+            heading.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    RedditDisplayPost redditDisplayPost = mRedditDisplayPostsList.get(position);
+                    fragmentListener.showWebFragment(redditDisplayPost.getUrl());
+                }
+            });
         }
     }
 
-    public RedditPostListAdapter(Context context) {
+    public RedditPostListAdapter(Context context,FragmentListener fragmentListener) {
         mRedditDisplayPostsList = new ArrayList<>();
+        this.fragmentListener = fragmentListener;
         mContext = context;
     }
 
@@ -151,4 +177,11 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     public int getListSize() {
         return mRedditDisplayPostsList.size();
     }
+    public RedditDisplayPost getItem(int position){return  mRedditDisplayPostsList.get(position);}
+
+    public interface FragmentListener{
+        void showDialogFragment(String url);
+        void showWebFragment(String url);
+    }
 }
+

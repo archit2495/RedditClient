@@ -13,24 +13,24 @@ import lombok.Getter;
  */
 
 public class Post {
-    public class Preview{
-        private class Type{
-            private class Image{
+    public class Preview {
+        private class Type {
+            private class Image {
                 @Getter
                 private String url;
             }
+
             @Getter
             private Image source;
-            @Getter
-            private List<Image> resolutions;
         }
 
         public List<Type> images;
-        public String getImageUrl(){
+
+        public String getImageUrl() {
             return images.get(0).getSource().getUrl();
         }
-        public String getUrl(){return images.get(0).getResolutions().get(0).getUrl();}
     }
+
     @Getter
     private Preview preview;
     @Getter
@@ -41,16 +41,21 @@ public class Post {
     private int score;
     @Getter
     private int num_comments;
-    @Getter @SerializedName("created_utc")
+    @Getter
+    @SerializedName("created_utc")
     private long created;
     @Getter
     private String subreddit_name_prefixed;
     @Getter
     private String domain;
-    @Getter @SerializedName("is_self")
+    @Getter
+    @SerializedName("is_self")
     private Boolean IsSelf;
-    @Getter @SerializedName("selftext_html")
+    @Getter
+    @SerializedName("selftext_html")
     private String SelfTextHTML;
+    @Getter
+    private String url;
     @Getter
     private String id;
 }

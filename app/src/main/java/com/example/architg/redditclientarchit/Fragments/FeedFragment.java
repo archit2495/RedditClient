@@ -1,16 +1,22 @@
 package com.example.architg.redditclientarchit.Fragments;
 
+import android.app.Dialog;
+import android.support.v4.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.architg.redditclientarchit.Adapters.RedditPostListAdapter;
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
@@ -27,7 +33,7 @@ import java.util.List;
  * Created by archit.g on 28/08/17.
  */
 
-public class FeedFragment extends Fragment {
+public class FeedFragment extends Fragment implements RedditPostListAdapter.FragmentListener{
     Context mContext;
     String mType;
     String after = "";
@@ -65,7 +71,7 @@ public class FeedFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mRedditPostListAdapter = new RedditPostListAdapter(mContext);
+        mRedditPostListAdapter = new RedditPostListAdapter(mContext,FeedFragment.this);
         mRecyclerView.setAdapter(mRedditPostListAdapter);
         mLoader = new Loader(mContext);
         RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
@@ -96,6 +102,26 @@ public class FeedFragment extends Fragment {
 
     }
 
+    public void showDialogFragment(String url){
+        Log.i("clicked",url);
+        ImageDialogFragment dialogFragment = new ImageDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("url",url);
+        dialogFragment.setArguments(bundle);
+        FragmentManager fragmentManager = getFragmentManager();
+        dialogFragment.show(fragmentManager,"");
+    }
+
+    @Override
+    public void showWebFragment(String url) {
+        WebViewFragment webViewFragment = new WebViewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("url",url);
+        webViewFragment.setArguments(bundle);
+        FragmentManager fragmentManager = getFragmentManager();
+        webViewFragment.show(fragmentManager,"");
+    }
+
     Boolean isPageBeingLoaded() {
         int totalItemCount = mRedditPostListAdapter.getListSize();
         int pastVisibleItems = mLayoutManager.findLastVisibleItemPosition();
@@ -121,6 +147,7 @@ public class FeedFragment extends Fragment {
 
                     @Override
                     public void onFailure(Throwable t) {
+                        Log.i("tmp",t.getStackTrace().getClass().toString());
                     }
                 });
     }

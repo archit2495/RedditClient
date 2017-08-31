@@ -24,7 +24,8 @@ public class Utils {
         String contentImageThumbnail = post.getThumbnail();
         String sourceImage = feedResponse.getImageURL();
         String selfHelpText = post.getSelfTextHTML();
-        return new RedditDisplayPost(id,name,time,heading,contentImageDetail,contentImageDetail,sourceImage,selfHelpText);
+        String url = post.getUrl();
+        return new RedditDisplayPost(id,name,time,heading,contentImageDetail,contentImageDetail,sourceImage,selfHelpText,url);
     }
     public static List<RedditDisplayPost> convertFeedResposeListToRedditDisplayPostList(Context context, List<Info.Data.FeedResponse> feedResponses){
         List<RedditDisplayPost> redditDisplayPosts = new ArrayList<>();
