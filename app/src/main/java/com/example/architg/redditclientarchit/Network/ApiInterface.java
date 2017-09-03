@@ -2,6 +2,7 @@ package com.example.architg.redditclientarchit.Network;
 
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.SubredditInfo;
+import com.example.architg.redditclientarchit.Model.SubredditListInfo;
 
 import lombok.Getter;
 import retrofit2.Call;
@@ -18,4 +19,6 @@ public interface ApiInterface {
     Call<Info> getInfo(@Path("type")String type,@Query("after") String afterID);
     @GET("/r/{type}/about.json")
     Call<SubredditInfo> getSubredditInfo(@Path("type") String type);
+    @GET("/subreddits/popular.json")
+    Call<SubredditListInfo> getSubredditListInfo();
 }

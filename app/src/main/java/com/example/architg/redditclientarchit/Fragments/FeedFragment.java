@@ -1,7 +1,5 @@
 package com.example.architg.redditclientarchit.Fragments;
 
-import android.app.Dialog;
-import android.support.v4.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,9 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 import com.example.architg.redditclientarchit.Adapters.RedditPostListAdapter;
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
@@ -44,6 +39,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     ProgressDialog mProgress;
     Loader mLoader;
     SwipeRefreshLayout mSwipeRefreshLayout;
+    FragmentManager fragmentManager;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -58,7 +54,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_main, container, false);
+        View view = inflater.inflate(R.layout.swipe_refresh_recycler_view, container, false);
         mRecyclerView = view.findViewById(R.id.feed_recycler_view);
         mLayoutManager = new LinearLayoutManager(mContext);
         mProgress = new ProgressDialog(mContext);
@@ -73,6 +69,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     public void onViewCreated(View view, Bundle savedInstanceState) {
         mRedditPostListAdapter = new RedditPostListAdapter(mContext,FeedFragment.this);
         mRecyclerView.setAdapter(mRedditPostListAdapter);
+        fragmentManager = getActivity().getSupportFragmentManager();
         mLoader = new Loader(mContext);
         RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
             @Override
@@ -108,7 +105,6 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
         Bundle bundle = new Bundle();
         bundle.putString("url",url);
         dialogFragment.setArguments(bundle);
-        FragmentManager fragmentManager = getFragmentManager();
         dialogFragment.show(fragmentManager,"");
     }
 

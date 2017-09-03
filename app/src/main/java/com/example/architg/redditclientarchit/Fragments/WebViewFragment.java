@@ -22,22 +22,6 @@ import com.example.architg.redditclientarchit.R;
  */
 
 public class WebViewFragment extends DialogFragment{
-    String url;
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        url = getArguments().getString("url");
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View v = inflater.inflate(R.layout.web_view,container,false);
-        WebView webView = v.findViewById(R.id.web_view_client);
-        webView.loadUrl(url);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
-        return v;
-    }
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -46,6 +30,9 @@ public class WebViewFragment extends DialogFragment{
         String url = getArguments().getString("url");
         WebView webView = dialog.findViewById(R.id.web_view_client);
         webView.loadUrl(url);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient());
         return dialog;
     }
 }
