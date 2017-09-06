@@ -1,8 +1,6 @@
 package com.example.architg.redditclientarchit.Fragments;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,27 +11,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.architg.redditclientarchit.Adapters.RedditPostListAdapter;
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
 import com.example.architg.redditclientarchit.Network.Loader;
 import com.example.architg.redditclientarchit.R;
+import com.example.architg.redditclientarchit.RedditApplication;
 import com.example.architg.redditclientarchit.Utility.Utils;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.gson.Gson;
 import com.squareup.otto.Subscribe;
-
 import java.util.List;
 
-import static com.example.architg.redditclientarchit.activity.MainActivity.bus;
+import static com.example.architg.redditclientarchit.Activity.MainActivity.bus;
 
 public class FeedFragment extends Fragment implements RedditPostListAdapter.FragmentListener {
-    Context mContext;
-    String mSubreddit = "archit";
-    String mType="cg";
+    String mType;
     String after = "";
     RecyclerView mRecyclerView;
     LinearLayoutManager mLayoutManager;
@@ -41,29 +35,27 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     Boolean mIsLoading = false;
     ProgressDialog mProgress;
     Loader mLoader;
+    String mSubreddit = "archit";
     SwipeRefreshLayout mSwipeRefreshLayout;
     FragmentManager fragmentManager;
-    SharedPreferences mSharedPreferences;
     boolean subredditSelected = false;
     boolean initDone = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.i(mType, "onCreate");
-        mSharedPreferences = getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE);
         super.onCreate(savedInstanceState);
         mType = getArguments().getString("type");
-        //mSubreddit = getArguments().getString("subreddit");
-        // loadData();
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(mType, "onCreateView");
         bus.register(this);
-        View view = inflater.inflate(R.layout.swipe_refresh_recycler_view, container, false);
-        mRedditPostListAdapter = new RedditPostListAdapter(mContext, FeedFragment.this);
-        mLoader = new Loader(getActivity().getApplicationContext());
-        mProgress = new ProgressDialog(mContext);
+        View view = inflater.inflate(R.layout.feed_list_view, container, false);
+        mRedditPostListAdapter = new RedditPostListAdapter(getActivity(), FeedFragment.this);
+        mLoader = Loader.getInstance();
+        mProgress = new ProgressDialog(getActivity());
         return view;
     }
 
@@ -71,7 +63,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.i(mType, "onViewCreated");
         mRecyclerView = view.findViewById(R.id.feed_recycler_view);
-        mLayoutManager = new LinearLayoutManager(mContext);
+        mLayoutManager = new LinearLayoutManager(getActivity());
         mProgress.setMessage("Please wait...");
         mProgress.setCancelable(false);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -90,10 +82,9 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
         };
         initDone = true;
         mRecyclerView.addOnScrollListener(mScrollListener);
-        Log.i(mType + " hgf",mSubreddit);
-        if(!mSharedPreferences.getString("subreddit","").equals(mSubreddit)) {
+         Log.i(mType + " hgf",mSubreddit);
+        if (!mLoader.getmSubreddit().equals(mSubreddit)) {
             updateView();
-            Log.i(mType + "here" + mSharedPreferences.getString("subreddit",""),"called + mSubreddit");
         }
         mSwipeRefreshLayout = view.findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
@@ -113,25 +104,19 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
         mRedditPostListAdapter.flush();
         after = "";
         boolean check = isVisible();
-        Log.i(mType,"visibility" + check);
-       // if (isVisible()) {
-            loadData();
-       // }
+        Log.i(mType, "visibility" + check);
+        // if (isVisible()) {
+        loadData();
+        // }
     }
 
     @Subscribe
     public void getSubreddit(String subreddit) {
-        Log.d("onSubReditChanged/" +mType, "getSubreddit:"+subreddit);
+        Log.d("onSubReditChanged/" + mType, "getSubreddit:" + subreddit);
         mSubreddit = subreddit;
         subredditSelected = true;
-        updateSharedPref();
+        mLoader.setmSubreddit(subreddit);
         updateView();
-    }
-
-    void updateSharedPref() {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString("subreddit", mSubreddit);
-        editor.commit();
     }
 
     public void showImageFragment(String url) {
@@ -141,7 +126,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     }
 
     public void showWebFragment(String url) {
-        WebViewFragment webViewFragment = WebViewFragment.getInstance("url");
+        WebViewFragment webViewFragment = WebViewFragment.getInstance(url);
         webViewFragment.show(fragmentManager, "");
     }
 
@@ -153,29 +138,28 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
         }
         return false;
     }
+
     @Override
-    public void onDestroyView(){
+    public void onDestroyView() {
         Log.i(mType, "onDestroyView");
         bus.unregister(this);
         mSubreddit = "archit";
         super.onDestroyView();
     }
+
     void loadData() {
         Log.i(mType, "loadData");
-        mSubreddit = mSharedPreferences.getString("subreddit", "");
-        Futures.addCallback((ListenableFuture<Info>) mLoader.loadData(mSubreddit, mType, after),
+        mSubreddit = mLoader.getmSubreddit();
+        Futures.addCallback((ListenableFuture<Info>) mLoader.loadData(mType, after),
                 new FutureCallback<Info>() {
                     @Override
                     public void onSuccess(Info info) {
                         mSwipeRefreshLayout.setRefreshing(false);
                         mProgress.dismiss();
                         mIsLoading = false;
-                        Gson gson = new Gson();
-                        String stringInfo = gson.toJson(info);
-                        SharedPreferences.Editor editor = mSharedPreferences.edit();
-                        editor.putString(mType, stringInfo);
-                        editor.commit();
-                        List<RedditDisplayPost> redditDisplayPosts = Utils.convertFeedResposeListToRedditDisplayPostList(mContext, info.getFeedResponse());
+                        RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
+                         redditApplication.updateInfo(mType,info);
+                        List<RedditDisplayPost> redditDisplayPosts = Utils.convertFeedResposeListToRedditDisplayPostList(info.getFeedResponse());
                         int beginIndex = mRedditPostListAdapter.update(redditDisplayPosts);
                         after = info.getData().getAfter();
                         loadSubredditDataIntoFeed(beginIndex, redditDisplayPosts);
@@ -187,10 +171,8 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                         mSwipeRefreshLayout.setRefreshing(false);
                         mProgress.dismiss();
                         mIsLoading = false;
-                        Gson gson = new Gson();
-                        String stringInfo = mSharedPreferences.getString(mType, null);
-                        Info info = gson.fromJson(stringInfo, Info.class);
-                        List<RedditDisplayPost> redditDisplayPosts = Utils.convertFeedResposeListToRedditDisplayPostList(mContext, info.getFeedResponse());
+                        RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
+                        List<RedditDisplayPost> redditDisplayPosts = Utils.convertFeedResposeListToRedditDisplayPostList(redditApplication.getInfo(mType).getFeedResponse());
                         mRedditPostListAdapter.update(redditDisplayPosts);
                     }
                 });
@@ -201,7 +183,6 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
             final RedditDisplayPost redditDisplayPost = redditDisplayPosts.get(i);
             final int position = i;
             Futures.addCallback((ListenableFuture<String>) mLoader.loadSubredditData(redditDisplayPost.getName().substring(2)), new FutureCallback<String>() {
-
                 @Override
                 public void onSuccess(String result) {
                     mRedditPostListAdapter.updateSourceImage(result, beginIndex + position);
@@ -216,12 +197,11 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
 
     }
 
-    public static FeedFragment getInstance(String type, String subreddit) {
+    public static FeedFragment getInstance(String type) {
         Log.i(type, "getInstance");
         FeedFragment feedFragment = new FeedFragment();
         Bundle bundle = new Bundle();
         bundle.putString("type", type);
-        bundle.putString("subreddit", subreddit);
         feedFragment.setArguments(bundle);
         return feedFragment;
     }

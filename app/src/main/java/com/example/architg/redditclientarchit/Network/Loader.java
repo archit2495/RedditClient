@@ -19,15 +19,25 @@ import retrofit2.Response;
  */
 
 public class Loader {
+    private static Loader mLoader;
     ApiInterface mApiInterface;
-    Context mContext;
-    public Loader(Context context){
-        mContext = context;
+    private String mSubreddit = "";
+    private Loader(){}
+    public String getmSubreddit() {
+        return mSubreddit;
     }
-
-    public Future<Info> loadData(String subreddit,String type,String after){
+    public static Loader getInstance(){
+        if(mLoader == null){
+            mLoader = new Loader();
+        }
+        return mLoader;
+    }
+    public void setmSubreddit(String mSubreddit) {
+        this.mSubreddit = mSubreddit;
+    }
+    public Future<Info> loadData(String type,String after){
         mApiInterface = ApiClient.getClient().create(ApiInterface.class);
-        Call<Info> call = mApiInterface.getInfo(subreddit,type,after);
+        Call<Info> call = mApiInterface.getInfo(mSubreddit,type,after);
         final SettableFuture<Info> future = SettableFuture.create();
         call.enqueue(new Callback<Info>() {
             @Override

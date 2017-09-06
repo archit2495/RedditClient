@@ -37,7 +37,7 @@ public class ImageDialogFragment extends DialogFragment {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
        // dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        dialog.setContentView(R.layout.full_screen);
+        dialog.setContentView(R.layout.full_screen_image);
         String url = getArguments().getString("url");
         final ImageView imageView = dialog.findViewById(R.id.image_view);
         final Context context = getContext();

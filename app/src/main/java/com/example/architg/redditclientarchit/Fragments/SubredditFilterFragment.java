@@ -22,7 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.architg.redditclientarchit.activity.MainActivity.bus;
+import static com.example.architg.redditclientarchit.Activity.MainActivity.bus;
 
 /**
  * Created by archit.g on 01/09/17.
@@ -33,7 +33,7 @@ public class SubredditFilterFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setContentView(R.layout.list_view);
+        dialog.setContentView(R.layout.subreddit_list_view);
         bus.register(this);
         return dialog;
     }
@@ -80,5 +80,8 @@ public class SubredditFilterFragment extends DialogFragment {
     public void onDestroy(){
         super.onDestroy();
         bus.unregister(this);
+    }
+    public static SubredditFilterFragment getInstance(){
+        return new SubredditFilterFragment();
     }
 }

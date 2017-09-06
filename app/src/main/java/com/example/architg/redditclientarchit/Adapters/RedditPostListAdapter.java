@@ -80,7 +80,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
 
     @Override
     public FeedViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_single_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.feed_listview_single_item, parent, false);
         return new FeedViewHolder(itemView);
     }
 

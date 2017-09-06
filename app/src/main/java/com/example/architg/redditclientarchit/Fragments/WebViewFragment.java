@@ -30,7 +30,6 @@ public class WebViewFragment extends DialogFragment{
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setContentView(R.layout.web_view);
         String url = getArguments().getString("url");
-        Log.i("web_url",url);
         WebView webView = dialog.findViewById(R.id.web_view_client);
         webView.loadUrl(url);
         WebSettings webSettings = webView.getSettings();
