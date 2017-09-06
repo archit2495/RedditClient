@@ -1,20 +1,15 @@
 package com.example.architg.redditclientarchit.Fragments;
 
 import android.app.Dialog;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.example.architg.redditclientarchit.R;
 
 /**
@@ -22,17 +17,34 @@ import com.example.architg.redditclientarchit.R;
  */
 
 public class WebViewFragment extends DialogFragment{
+    public static WebViewFragment getInstance(String url){
+        WebViewFragment webViewFragment = new WebViewFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("url",url);
+        webViewFragment.setArguments(bundle);
+        return webViewFragment;
+    }
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
         dialog.setContentView(R.layout.web_view);
         String url = getArguments().getString("url");
+        Log.i("web_url",url);
         WebView webView = dialog.findViewById(R.id.web_view_client);
         webView.loadUrl(url);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient());
         return dialog;
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        getDialog().getWindow().setLayout(width,height);
     }
 }

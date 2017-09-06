@@ -1,9 +1,12 @@
 package com.example.architg.redditclientarchit.Utility;
+
 import android.content.Context;
 import android.text.format.DateUtils;
+
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.Post;
 import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;

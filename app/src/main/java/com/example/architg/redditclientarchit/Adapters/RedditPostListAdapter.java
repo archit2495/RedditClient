@@ -1,12 +1,8 @@
 package com.example.architg.redditclientarchit.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -25,15 +21,11 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.example.architg.redditclientarchit.Fragments.ImageDialogFragment;
 import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
 import com.example.architg.redditclientarchit.R;
-import com.example.architg.redditclientarchit.activity.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import lombok.core.Main;
 
 /**
  * Created by archit.g on 11/08/17.
@@ -66,7 +58,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                     int position = getAdapterPosition();
                     Log.i("clicked",position + "");
                     RedditDisplayPost redditDisplayPost = mRedditDisplayPostsList.get(position);
-                    fragmentListener.showDialogFragment(redditDisplayPost.getContentImageThumbnail());
+                    fragmentListener.showImageFragment(redditDisplayPost.getContentImageThumbnail());
                 }
             });
             heading.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +128,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        imageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_report_problem));
+                        imageView.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.ic_error));
                         progressBar.setVisibility(View.GONE);
 
                         return true;
@@ -172,6 +164,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         notifyItemChanged(index);
     }
     public void flush(){
+        if(mRedditDisplayPostsList != null)
         mRedditDisplayPostsList.clear();
     }
     public int getListSize() {
@@ -180,7 +173,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     public RedditDisplayPost getItem(int position){return  mRedditDisplayPostsList.get(position);}
 
     public interface FragmentListener{
-        void showDialogFragment(String url);
+        void showImageFragment(String url);
         void showWebFragment(String url);
     }
 }

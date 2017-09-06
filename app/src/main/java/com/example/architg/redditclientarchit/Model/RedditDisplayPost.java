@@ -1,12 +1,5 @@
 package com.example.architg.redditclientarchit.Model;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Created by archit.g on 23/08/17.
  */

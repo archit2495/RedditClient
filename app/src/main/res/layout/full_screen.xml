@@ -3,19 +3,15 @@
     android:layout_gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:minHeight="500dp"
-    android:minWidth="500dp"
-    android:background="#000000"
+    android:background="@android:color/transparent"
   >
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@mipmap/ic_launcher"
-        android:minHeight="400dp"
-        android:minWidth="300dp"
         android:layout_gravity="center"
-        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
        />
     <ProgressBar
         android:id="@+id/progress"

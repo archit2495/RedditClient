@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/subreddit_recycler_view"
-    android:layout_width="400dp"
-    android:layout_height="400dp"
-    android:scrollbars="vertical"></android.support.v7.widget.RecyclerView>
-

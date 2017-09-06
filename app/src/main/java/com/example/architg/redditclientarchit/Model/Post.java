@@ -1,7 +1,5 @@
 package com.example.architg.redditclientarchit.Model;
 
-import android.util.Log;
-
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

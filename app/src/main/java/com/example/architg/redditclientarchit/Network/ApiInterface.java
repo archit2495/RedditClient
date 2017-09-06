@@ -4,7 +4,6 @@ import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.Model.SubredditInfo;
 import com.example.architg.redditclientarchit.Model.SubredditListInfo;
 
-import lombok.Getter;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -15,8 +14,8 @@ import retrofit2.http.Query;
  */
 
 public interface ApiInterface {
-    @GET("/{type}.json?limit=10")
-    Call<Info> getInfo(@Path("type")String type,@Query("after") String afterID);
+    @GET("{subreddit}/{type}.json?limit=10")
+    Call<Info> getInfo(@Path("subreddit")String subreddit,@Path("type")String type,@Query("after") String afterID);
     @GET("/r/{type}/about.json")
     Call<SubredditInfo> getSubredditInfo(@Path("type") String type);
     @GET("/subreddits/popular.json")

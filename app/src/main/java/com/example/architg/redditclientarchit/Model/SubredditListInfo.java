@@ -16,7 +16,7 @@ public class SubredditListInfo {
         public class FeedResponse{
             public class Name{
                 @Getter
-                @SerializedName("subreddit_name_prefixed")
+                @SerializedName("display_name_prefixed")
                 private String subreddit_name;
             }
             @Getter

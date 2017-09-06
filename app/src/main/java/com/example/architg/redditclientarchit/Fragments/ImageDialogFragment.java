@@ -1,16 +1,14 @@
 package com.example.architg.redditclientarchit.Fragments;
+
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.content.Context;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
@@ -26,10 +24,18 @@ import com.example.architg.redditclientarchit.R;
  */
 
 public class ImageDialogFragment extends DialogFragment {
+    public static ImageDialogFragment getInstance(String url){
+        ImageDialogFragment imageDialogFragment = new ImageDialogFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("url", url);
+        imageDialogFragment.setArguments(bundle);
+        return imageDialogFragment;
+    }
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
        // dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
         dialog.setContentView(R.layout.full_screen);
         String url = getArguments().getString("url");
@@ -41,9 +47,8 @@ public class ImageDialogFragment extends DialogFragment {
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_report_problem));
+                        imageView.setImageDrawable(context.getResources().getDrawable(R.mipmap.ic_error));
                         progressBar.setVisibility(View.GONE);
-
                         return true;
                     }
 
@@ -56,11 +61,13 @@ public class ImageDialogFragment extends DialogFragment {
                 .into(imageView);
         return dialog;
     }
-
-
     @Override
-    public void onResume() {
+    public void onResume(){
         super.onResume();
-        getDialog().getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        getDialog().getWindow().setLayout(width,height);
     }
 }
