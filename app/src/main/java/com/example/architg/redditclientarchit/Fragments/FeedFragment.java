@@ -11,13 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.architg.redditclientarchit.Activity.MainActivity;
 import com.example.architg.redditclientarchit.Adapters.RedditPostListAdapter;
 import com.example.architg.redditclientarchit.Model.Info;
-import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
 import com.example.architg.redditclientarchit.Network.Loader;
 import com.example.architg.redditclientarchit.R;
 import com.example.architg.redditclientarchit.RedditApplication;
-import com.example.architg.redditclientarchit.Utility.Utils;
+import com.github.silvestrpredko.dotprogressbar.DotProgressBar;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -38,32 +39,28 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     String mSubreddit = "archit";
     SwipeRefreshLayout mSwipeRefreshLayout;
     FragmentManager fragmentManager;
-    boolean subredditSelected = false;
-    boolean initDone = false;
-
+    DotProgressBar mDotProgressBar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i(mType, "onCreate");
         super.onCreate(savedInstanceState);
         mType = getArguments().getString("type");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(mType, "onCreateView");
         bus.register(this);
         View view = inflater.inflate(R.layout.feed_list_view, container, false);
         mRedditPostListAdapter = new RedditPostListAdapter(getActivity(), FeedFragment.this);
-        mLoader = Loader.getInstance();
+        mLoader = ((MainActivity)getActivity()).getLoader();
         mProgress = new ProgressDialog(getActivity());
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.i(mType, "onViewCreated");
         mRecyclerView = view.findViewById(R.id.feed_recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
+        mDotProgressBar = view.findViewById(R.id.dot_progress_bar);
         mProgress.setMessage("Please wait...");
         mProgress.setCancelable(false);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -80,9 +77,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                 }
             }
         };
-        initDone = true;
         mRecyclerView.addOnScrollListener(mScrollListener);
-         Log.i(mType + " hgf",mSubreddit);
         if (!mLoader.getmSubreddit().equals(mSubreddit)) {
             updateView();
         }
@@ -100,27 +95,19 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     }
 
     public void updateView() {
-        Log.i(mType, "updateView");
         mRedditPostListAdapter.flush();
         after = "";
-        boolean check = isVisible();
-        Log.i(mType, "visibility" + check);
-        // if (isVisible()) {
         loadData();
-        // }
     }
 
     @Subscribe
     public void getSubreddit(String subreddit) {
-        Log.d("onSubReditChanged/" + mType, "getSubreddit:" + subreddit);
         mSubreddit = subreddit;
-        subredditSelected = true;
         mLoader.setmSubreddit(subreddit);
         updateView();
     }
 
     public void showImageFragment(String url) {
-        Log.i("clicked", url);
         ImageDialogFragment imageDialogFragment = ImageDialogFragment.getInstance(url);
         imageDialogFragment.show(fragmentManager, "");
     }
@@ -141,14 +128,12 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
 
     @Override
     public void onDestroyView() {
-        Log.i(mType, "onDestroyView");
         bus.unregister(this);
         mSubreddit = "archit";
         super.onDestroyView();
     }
 
     void loadData() {
-        Log.i(mType, "loadData");
         mSubreddit = mLoader.getmSubreddit();
         Futures.addCallback((ListenableFuture<Info>) mLoader.loadData(mType, after),
                 new FutureCallback<Info>() {
@@ -158,11 +143,11 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                         mProgress.dismiss();
                         mIsLoading = false;
                         RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
-                         redditApplication.updateInfo(mType,info);
-                        List<RedditDisplayPost> redditDisplayPosts = Utils.convertFeedResposeListToRedditDisplayPostList(info.getFeedResponse());
-                        int beginIndex = mRedditPostListAdapter.update(redditDisplayPosts);
+                        redditApplication.updateInfo(mType,info);
+                        int beginIndex = mRedditPostListAdapter.update(info.getFeedResponse());
+                        mDotProgressBar.setVisibility(View.GONE);
                         after = info.getData().getAfter();
-                        loadSubredditDataIntoFeed(beginIndex, redditDisplayPosts);
+                        loadSubredditDataIntoFeed(beginIndex, info.getFeedResponse());
                     }
 
                     @Override
@@ -172,17 +157,16 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                         mProgress.dismiss();
                         mIsLoading = false;
                         RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
-                        List<RedditDisplayPost> redditDisplayPosts = Utils.convertFeedResposeListToRedditDisplayPostList(redditApplication.getInfo(mType).getFeedResponse());
-                        mRedditPostListAdapter.update(redditDisplayPosts);
+                        mRedditPostListAdapter.update(redditApplication.getInfo(mType).getFeedResponse());
                     }
                 });
     }
 
-    private void loadSubredditDataIntoFeed(final int beginIndex, List<RedditDisplayPost> redditDisplayPosts) {
-        for (int i = 0; i < redditDisplayPosts.size(); i++) {
-            final RedditDisplayPost redditDisplayPost = redditDisplayPosts.get(i);
+    private void loadSubredditDataIntoFeed(final int beginIndex, List<Info.Data.FeedResponse> feedResponses) {
+        for (int i = 0; i < feedResponses.size(); i++) {
+            final Info.Data.FeedResponse feedResponse = feedResponses.get(i);
             final int position = i;
-            Futures.addCallback((ListenableFuture<String>) mLoader.loadSubredditData(redditDisplayPost.getName().substring(2)), new FutureCallback<String>() {
+            Futures.addCallback((ListenableFuture<String>) mLoader.loadSubredditData(feedResponse.getPost().getSubreddit_name_prefixed().substring(2)), new FutureCallback<String>() {
                 @Override
                 public void onSuccess(String result) {
                     mRedditPostListAdapter.updateSourceImage(result, beginIndex + position);
@@ -198,7 +182,6 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     }
 
     public static FeedFragment getInstance(String type) {
-        Log.i(type, "getInstance");
         FeedFragment feedFragment = new FeedFragment();
         Bundle bundle = new Bundle();
         bundle.putString("type", type);

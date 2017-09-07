@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.example.architg.redditclientarchit.Model.RedditDisplayPost;
+import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.R;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.List;
  */
 
 public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAdapter.FeedViewHolder> {
-    private List<RedditDisplayPost> mRedditDisplayPostsList;
+    private List<Info.Data.FeedResponse> mFeedResponses;
     private Context mContext;
     private FragmentListener fragmentListener;
 
@@ -55,25 +56,20 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
             contentImageFrame.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    Log.i("clicked",position + "");
-                    RedditDisplayPost redditDisplayPost = mRedditDisplayPostsList.get(position);
-                    fragmentListener.showImageFragment(redditDisplayPost.getContentImageThumbnail());
+                    fragmentListener.showImageFragment(mFeedResponses.get(getAdapterPosition()).getPost().getPreview().getImageUrl());
                 }
             });
             heading.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    RedditDisplayPost redditDisplayPost = mRedditDisplayPostsList.get(position);
-                    fragmentListener.showWebFragment(redditDisplayPost.getUrl());
+                    fragmentListener.showWebFragment(mFeedResponses.get(getAdapterPosition()).getPost().getUrl());
                 }
             });
         }
     }
 
     public RedditPostListAdapter(Context context,FragmentListener fragmentListener) {
-        mRedditDisplayPostsList = new ArrayList<>();
+        mFeedResponses = new ArrayList<>();
         this.fragmentListener = fragmentListener;
         mContext = context;
     }
@@ -86,24 +82,24 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
 
     @Override
     public void onBindViewHolder(FeedViewHolder feedViewHolder, int position) {
-        RedditDisplayPost redditDisplayPost = mRedditDisplayPostsList.get(position);
+        Info.Data.FeedResponse feedResponse = mFeedResponses.get(position);
         initPostHolder(feedViewHolder);
-        feedViewHolder.heading.setText(redditDisplayPost.getHeading());
-        feedViewHolder.time.setText(redditDisplayPost.getTime());
-        feedViewHolder.name.setText(redditDisplayPost.getName());
-        if (redditDisplayPost.getSourceImage() == null) {
+        feedViewHolder.heading.setText(feedResponse.getPost().getTitle());
+        feedViewHolder.time.setText(DateUtils.getRelativeTimeSpanString(feedResponse.getPost().getCreated()*1000l).toString());
+        feedViewHolder.name.setText(feedResponse.getPost().getSubreddit_name_prefixed());
+        if (feedResponse.getImageURL() == null) {
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_perm_identity);
             feedViewHolder.sourceImage.setImageDrawable(drawable);
         } else {
-            loadImageRounded(feedViewHolder.sourceImage, redditDisplayPost.getSourceImage());
+            loadImageRounded(feedViewHolder.sourceImage, feedResponse.getImageURL());
         }
-        if (redditDisplayPost.getContentImageThumbnail() != null && !redditDisplayPost.getContentImageThumbnail().equals("self") && !redditDisplayPost.getContentImageThumbnail().equals("default")) {
+        if (feedResponse.getPost()!= null && feedResponse.getPost().getPreview() != null && feedResponse.getPost().getPreview().getImageUrl() != null) {
             feedViewHolder.contentImageFrame.setVisibility(View.VISIBLE);
-            loadImage(feedViewHolder.contentImage, feedViewHolder.contentImageProgress, redditDisplayPost.getContentImageThumbnail());
+            loadImage(feedViewHolder.contentImage, feedViewHolder.contentImageProgress, feedResponse.getPost().getPreview().getImageUrl());
         }
-        if (redditDisplayPost.getSelfHelpText() != null) {
+        if (feedResponse.getPost().getSelfTextHTML() != null) {
             feedViewHolder.contentText.setVisibility(View.VISIBLE);
-           String text = redditDisplayPost.getSelfHelpText();
+           String text = feedResponse.getPost().getSelfTextHTML();
            text = text.replaceAll("&lt;","<");
            text= text.replaceAll("&gt;",">");
             feedViewHolder.contentText.setText(Html.fromHtml(text));
@@ -115,7 +111,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     }
     @Override
     public int getItemCount() {
-        return mRedditDisplayPostsList.size();
+        return mFeedResponses.size();
     }
 
     private void loadImage(final ImageView imageView, final ProgressBar progressBar, final String url) {
@@ -150,27 +146,27 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                 .apply(requestOptions).into(imageView);
     }
 
-    public int update(List<RedditDisplayPost> redditDisplayPosts) {
-        int start = mRedditDisplayPostsList.size();
-        for (int i = 0; i < redditDisplayPosts.size(); i++) {                       //ask about adding in front of the list
-            mRedditDisplayPostsList.add(redditDisplayPosts.get(i));
+    public int update(List<Info.Data.FeedResponse> feedResponses) {
+        int start = mFeedResponses.size();
+        for (int i = 0; i < feedResponses.size(); i++) {                       //ask about adding in front of the list
+            mFeedResponses.add(feedResponses.get(i));
         }
-        notifyItemRangeChanged(start, redditDisplayPosts.size());
+        notifyItemRangeChanged(start, feedResponses.size());
         return start;
     }
 
     public void updateSourceImage(String imageUrl, int index) {
-        mRedditDisplayPostsList.get(index).setSourceImage(imageUrl);
+        mFeedResponses.get(index).setImageURL(imageUrl);
         notifyItemChanged(index);
     }
     public void flush(){
-        if(mRedditDisplayPostsList != null)
-        mRedditDisplayPostsList.clear();
+        if(mFeedResponses != null)
+        mFeedResponses.clear();
     }
     public int getListSize() {
-        return mRedditDisplayPostsList.size();
+        return mFeedResponses.size();
     }
-    public RedditDisplayPost getItem(int position){return  mRedditDisplayPostsList.get(position);}
+    public Info.Data.FeedResponse getItem(int position){return  mFeedResponses.get(position);}
 
     public interface FragmentListener{
         void showImageFragment(String url);

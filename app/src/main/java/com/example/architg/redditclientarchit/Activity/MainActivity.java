@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.example.architg.redditclientarchit.Fragments.FeedFragment;
 import com.example.architg.redditclientarchit.Fragments.SubredditFilterFragment;
+import com.example.architg.redditclientarchit.Network.Loader;
 import com.example.architg.redditclientarchit.R;
 import com.example.architg.redditclientarchit.Utility.Utils;
 import com.squareup.otto.Bus;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity{
     private ViewPager mViewPager;
     private ViewPagerAdapter adapter;
     public static Bus bus;
+    public Loader mLoader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,12 @@ public class MainActivity extends AppCompatActivity{
     private void bindViews(){
         mViewPager.setAdapter(adapter);
         mTabLayout.setupWithViewPager(mViewPager);
+    }
+    public Loader getLoader(){
+        if(mLoader == null){
+            mLoader = new Loader();
+        }
+        return mLoader;
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

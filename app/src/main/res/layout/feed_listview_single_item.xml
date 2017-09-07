@@ -80,7 +80,7 @@
                 android:paddingRight="10dp"
                 android:text="heading"
                 android:textColor="@android:color/black"
-                android:textSize="13sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -134,7 +134,7 @@
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
                 android:paddingBottom="10dp"
-                android:weightSum="3"
+                android:weightSum="2"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/contentText">
@@ -150,8 +150,10 @@
                     android:gravity="center"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
-                    android:text="@string/vote"
-                    android:textSize="10sp" />
+                    android:textColor="#ff4081"
+                    android:maxLines="1"
+                    android:text="2.8k votes"
+                    android:textSize="18sp" />
 
                 <View
                     android:id="@+id/vertical_separator_1"
@@ -169,10 +171,12 @@
                     android:gravity="center"
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
-                    android:text="@string/comments"
-                    android:textSize="10sp" />
+                    android:text="283 Comments"
+                    android:textColor="#ff4081"
+                    android:maxLines="1"
+                    android:textSize="18sp" />
 
-                <View
+                <!--<View
                     android:id="@+id/vertical_separator_2"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
@@ -183,6 +187,7 @@
                 <TextView
                     android:id="@+id/commentsCount"
                     android:layout_width="0dp"
+                    android:maxLines="1"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:drawableLeft="@drawable/ic_share"
@@ -190,7 +195,7 @@
                     android:paddingLeft="17dp"
                     android:paddingRight="17dp"
                     android:text="@string/share"
-                    android:textSize="10sp" />
+                    android:textSize="12sp" />-->
 
 
             </LinearLayout>
