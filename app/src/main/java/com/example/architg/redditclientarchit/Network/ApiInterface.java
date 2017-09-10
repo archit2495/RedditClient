@@ -1,7 +1,7 @@
 package com.example.architg.redditclientarchit.Network;
 
-import com.example.architg.redditclientarchit.Model.CommentInfo;
 import com.example.architg.redditclientarchit.Model.Info;
+import com.example.architg.redditclientarchit.Model.Root;
 import com.example.architg.redditclientarchit.Model.SubredditInfo;
 import com.example.architg.redditclientarchit.Model.SubredditListInfo;
 
@@ -24,5 +24,5 @@ public interface ApiInterface {
     @GET("/subreddits/popular.json")
     Call<SubredditListInfo> getSubredditListInfo();
     @GET("r/{subreddit}/comments/{article}.json")
-    Call<CommentInfo> getCommentInfo(@Path("subreddit")String subreddit,@Path("article")String article,@Query("sort")String sortingCriteria);
+    Call<Root> getCommentInfo(@Path("subreddit")String subreddit, @Path("article")String article, @Query("sort")String sortingCriteria);
 }

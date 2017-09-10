@@ -40,6 +40,8 @@ public class Post {
     @Getter
     private int num_comments;
     @Getter
+    private String author;
+    @Getter
     @SerializedName("created_utc")
     private long created;
     @Getter

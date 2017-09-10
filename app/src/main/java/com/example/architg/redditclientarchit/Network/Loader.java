@@ -1,13 +1,15 @@
 package com.example.architg.redditclientarchit.Network;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
-import com.example.architg.redditclientarchit.Model.CommentInfo;
 import com.example.architg.redditclientarchit.Model.Info;
+import com.example.architg.redditclientarchit.Model.Root;
 import com.example.architg.redditclientarchit.Model.SubredditInfo;
 import com.example.architg.redditclientarchit.Model.SubredditListInfo;
 import com.google.common.util.concurrent.SettableFuture;
 
+import java.util.List;
 import java.util.concurrent.Future;
 
 import retrofit2.Call;
@@ -20,8 +22,8 @@ import retrofit2.Response;
 
 public class Loader {
     ApiInterface mApiInterface = ApiClient.getClient().create(ApiInterface.class);
-    private String mSubreddit = "";
-    private String mArticle = "";
+    private String mSubreddit = "happy";
+    private String mArticle = "6yze1g";
 
     public String getmArticle() {
         return mArticle;
@@ -60,23 +62,6 @@ public class Loader {
         return future;
     }
 
-    public Future<String> loadSubredditData(String path) {
-        Call<SubredditInfo> call = mApiInterface.getSubredditInfo(path);
-        final SettableFuture<String> future = SettableFuture.create();
-        call.enqueue(new Callback<SubredditInfo>() {
-            @Override
-            public void onResponse(Call<SubredditInfo> call, Response<SubredditInfo> response) {
-                String url = response.body().getData().getIcon_img();
-                future.set(url);
-            }
-
-            @Override
-            public void onFailure(Call<SubredditInfo> call, Throwable t) {
-                future.setException(t);
-            }
-        });
-        return future;
-    }
     public Future<SubredditListInfo> loadSubredditFilters(){
         Call<SubredditListInfo> call = mApiInterface.getSubredditListInfo();
         final SettableFuture<SubredditListInfo> future = SettableFuture.create();
@@ -91,18 +76,17 @@ public class Loader {
         });
         return future;
     }
-    public Future<CommentInfo> loadComments(String sortingCriteria){
-        Call<CommentInfo> call = mApiInterface.getCommentInfo(mSubreddit,mArticle,sortingCriteria);
-        final SettableFuture<CommentInfo> future = SettableFuture.create();
-        call.enqueue(new Callback<CommentInfo>() {
+    public Future<Root> loadComments(String sortingCriteria){
+        Call<Root> call = mApiInterface.getCommentInfo(mSubreddit,mArticle,sortingCriteria);
+        final SettableFuture<Root> future = SettableFuture.create();
+        call.enqueue(new Callback<Root>() {
             @Override
-            public void onResponse(Call<CommentInfo> call, Response<CommentInfo> response) {
+            public void onResponse(Call<Root> call, Response<Root> response) {
                 future.set(response.body());
             }
 
             @Override
-            public void onFailure(Call<CommentInfo> call, Throwable t) {
-
+            public void onFailure(Call<Root> call, Throwable t) {
             }
         });
         return future;

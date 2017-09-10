@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.architg.redditclientarchit.Activity.MainActivity;
 import com.example.architg.redditclientarchit.Adapters.RedditPostListAdapter;
@@ -144,41 +145,21 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                         mIsLoading = false;
                         RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
                         redditApplication.updateInfo(mType,info);
-                        int beginIndex = mRedditPostListAdapter.update(info.getFeedResponse());
                         mDotProgressBar.setVisibility(View.GONE);
+                        mRedditPostListAdapter.update(info.getFeedResponse());
                         after = info.getData().getAfter();
-                        loadSubredditDataIntoFeed(beginIndex, info.getFeedResponse());
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
-                        Log.i("tmp", t.getStackTrace().getClass().toString());
                         mSwipeRefreshLayout.setRefreshing(false);
                         mProgress.dismiss();
                         mIsLoading = false;
                         RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
+                        mDotProgressBar.setVisibility(View.GONE);
                         mRedditPostListAdapter.update(redditApplication.getInfo(mType).getFeedResponse());
                     }
                 });
-    }
-
-    private void loadSubredditDataIntoFeed(final int beginIndex, List<Info.Data.FeedResponse> feedResponses) {
-        for (int i = 0; i < feedResponses.size(); i++) {
-            final Info.Data.FeedResponse feedResponse = feedResponses.get(i);
-            final int position = i;
-            Futures.addCallback((ListenableFuture<String>) mLoader.loadSubredditData(feedResponse.getPost().getSubreddit_name_prefixed().substring(2)), new FutureCallback<String>() {
-                @Override
-                public void onSuccess(String result) {
-                    mRedditPostListAdapter.updateSourceImage(result, beginIndex + position);
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-                    mRedditPostListAdapter.updateSourceImage(null, beginIndex + position);
-                }
-            });
-        }
-
     }
 
     public static FeedFragment getInstance(String type) {

@@ -1,6 +1,7 @@
 package com.example.architg.redditclientarchit.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -22,8 +23,10 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.architg.redditclientarchit.Activity.CommentsActivity;
 import com.example.architg.redditclientarchit.Model.Info;
 import com.example.architg.redditclientarchit.R;
+import com.example.architg.redditclientarchit.Utility.Util;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +41,8 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     private FragmentListener fragmentListener;
 
     public class FeedViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, time, heading, contentText;
-        public ImageView sourceImage, contentImage;
+        public TextView name, time, heading, contentText,votes,comments;
+        public ImageView contentImage;
         public FrameLayout contentImageFrame;
         public ProgressBar contentImageProgress;
 
@@ -48,7 +51,8 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
             name = view.findViewById(R.id.name);
             time = view.findViewById(R.id.time);
             heading = view.findViewById(R.id.heading);
-            sourceImage = view.findViewById(R.id.sourceImage);
+            votes = view.findViewById(R.id.upvoteCount);
+            comments = view.findViewById(R.id.comments);
             contentImage = view.findViewById(R.id.contentImage);
             contentText = view.findViewById(R.id.contentText);
             contentImageFrame = view.findViewById(R.id.contentImageFrame);
@@ -68,7 +72,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         }
     }
 
-    public RedditPostListAdapter(Context context,FragmentListener fragmentListener) {
+    public RedditPostListAdapter(Context context, FragmentListener fragmentListener) {
         mFeedResponses = new ArrayList<>();
         this.fragmentListener = fragmentListener;
         mContext = context;
@@ -82,40 +86,50 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
 
     @Override
     public void onBindViewHolder(FeedViewHolder feedViewHolder, int position) {
-        Info.Data.FeedResponse feedResponse = mFeedResponses.get(position);
+        final Info.Data.FeedResponse feedResponse = mFeedResponses.get(position);
         initPostHolder(feedViewHolder);
         feedViewHolder.heading.setText(feedResponse.getPost().getTitle());
-        feedViewHolder.time.setText(DateUtils.getRelativeTimeSpanString(feedResponse.getPost().getCreated()*1000l).toString());
+        feedViewHolder.time.setText(DateUtils.getRelativeTimeSpanString(feedResponse.getPost().getCreated() * 1000l).toString());
         feedViewHolder.name.setText(feedResponse.getPost().getSubreddit_name_prefixed());
-        if (feedResponse.getImageURL() == null) {
-            Drawable drawable = mContext.getResources().getDrawable(R.drawable.ic_perm_identity);
-            feedViewHolder.sourceImage.setImageDrawable(drawable);
-        } else {
-            loadImageRounded(feedViewHolder.sourceImage, feedResponse.getImageURL());
-        }
-        if (feedResponse.getPost()!= null && feedResponse.getPost().getPreview() != null && feedResponse.getPost().getPreview().getImageUrl() != null) {
+        feedViewHolder.votes.setText(Util.format(feedResponse.getPost().getScore()) + " votes");
+        feedViewHolder.comments.setText(Util.format(feedResponse.getPost().getNum_comments()) + " comments");
+        feedViewHolder.comments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchCommentsActivity(feedResponse.getPost().getSubreddit_name_prefixed().substring(2),feedResponse.getPost().getId(),feedResponse.getPost().getPreview().getImageUrl());
+            }
+        });
+        if (feedResponse.getPost() != null && feedResponse.getPost().getPreview() != null && feedResponse.getPost().getPreview().getImageUrl() != null) {
             feedViewHolder.contentImageFrame.setVisibility(View.VISIBLE);
             loadImage(feedViewHolder.contentImage, feedViewHolder.contentImageProgress, feedResponse.getPost().getPreview().getImageUrl());
         }
         if (feedResponse.getPost().getSelfTextHTML() != null) {
             feedViewHolder.contentText.setVisibility(View.VISIBLE);
-           String text = feedResponse.getPost().getSelfTextHTML();
-           text = text.replaceAll("&lt;","<");
-           text= text.replaceAll("&gt;",">");
+            String text = feedResponse.getPost().getSelfTextHTML();
+            text = text.replaceAll("&lt;", "<");
+            text = text.replaceAll("&gt;", ">");
             feedViewHolder.contentText.setText(Html.fromHtml(text));
         }
     }
-    private void initPostHolder(FeedViewHolder feedViewHolder){
+    private void launchCommentsActivity(String subreddit,String article,String image){
+        Intent intent = new Intent(mContext, CommentsActivity.class);
+        intent.putExtra("subreddit",subreddit);
+        intent.putExtra("article",article);
+        intent.putExtra("image",image);
+        mContext.startActivity(intent);
+    }
+    private void initPostHolder(FeedViewHolder feedViewHolder) {
         feedViewHolder.contentText.setVisibility(View.GONE);
         feedViewHolder.contentImageFrame.setVisibility(View.GONE);
     }
+
     @Override
     public int getItemCount() {
         return mFeedResponses.size();
     }
 
     private void loadImage(final ImageView imageView, final ProgressBar progressBar, final String url) {
-        Log.i("url",url);
+        Log.i("url", url);
         RequestOptions requestOptions = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(mContext)
@@ -139,12 +153,6 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                 .into(imageView);
     }
 
-    private void loadImageRounded(ImageView imageView, String url) {
-        RequestOptions requestOptions = new RequestOptions().placeholder(R.drawable.ic_perm_identity).circleCrop();
-        Glide.with(mContext)
-                .load(url)
-                .apply(requestOptions).into(imageView);
-    }
 
     public int update(List<Info.Data.FeedResponse> feedResponses) {
         int start = mFeedResponses.size();
@@ -155,21 +163,22 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         return start;
     }
 
-    public void updateSourceImage(String imageUrl, int index) {
-        mFeedResponses.get(index).setImageURL(imageUrl);
-        notifyItemChanged(index);
+    public void flush() {
+        if (mFeedResponses != null)
+            mFeedResponses.clear();
     }
-    public void flush(){
-        if(mFeedResponses != null)
-        mFeedResponses.clear();
-    }
+
     public int getListSize() {
         return mFeedResponses.size();
     }
-    public Info.Data.FeedResponse getItem(int position){return  mFeedResponses.get(position);}
 
-    public interface FragmentListener{
+    public Info.Data.FeedResponse getItem(int position) {
+        return mFeedResponses.get(position);
+    }
+
+    public interface FragmentListener {
         void showImageFragment(String url);
+
         void showWebFragment(String url);
     }
 }
