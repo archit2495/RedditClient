@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Model;
+package com.example.architg.redditclientarchit.model;
 
 import lombok.Getter;
 

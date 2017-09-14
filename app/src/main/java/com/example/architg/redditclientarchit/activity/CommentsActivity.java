@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Activity;
+package com.example.architg.redditclientarchit.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -6,30 +6,21 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.example.architg.redditclientarchit.Fragments.CommentFragment;
-import com.example.architg.redditclientarchit.Fragments.FeedFragment;
-import com.example.architg.redditclientarchit.Model.Info;
-import com.example.architg.redditclientarchit.Model.Root;
-import com.example.architg.redditclientarchit.Network.Loader;
+import com.example.architg.redditclientarchit.fragments.CommentFragment;
+import com.example.architg.redditclientarchit.network.Loader;
 import com.example.architg.redditclientarchit.R;
-import com.example.architg.redditclientarchit.RedditApplication;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
-
-import java.util.List;
 
 /**
  * Created by archit.g on 07/09/17.
  */
 
 public class CommentsActivity extends AppCompatActivity{
-    String mSubreddit,mArticle,mImage;
+    String mSubreddit,mArticle,mImage,mPermalink,mTitle;
     Loader mLoader;
     enum SortingCriteria{
         TOP("Top","top"),NEW("New","new"),OLD("Old","old"),RANDOM("Random","random"),CONTROVERSIAL("Controversial","controversial");
@@ -46,8 +37,16 @@ public class CommentsActivity extends AppCompatActivity{
         mSubreddit = getIntent().getStringExtra("subreddit");
         mArticle = getIntent().getStringExtra("article");
         mImage = getIntent().getStringExtra("image");
-        ImageView imageView = findViewById(R.id.post_image);
-        loadImage(imageView);
+        mTitle = getIntent().getStringExtra("title");
+        mPermalink = getIntent().getStringExtra("permalink");
+        if(mImage != null) {
+            ImageView imageView = findViewById(R.id.post_image);
+            loadImage(imageView);
+        }else{
+            TextView textView = findViewById(R.id.post_title);
+            textView.setVisibility(View.VISIBLE);
+            textView.setText(mTitle);
+        }
         //loadData();
         CommentsActivity.ViewPagerAdapter adapter = new CommentsActivity.ViewPagerAdapter(getSupportFragmentManager(), CommentsActivity.SortingCriteria.values());
         ViewPager mViewPager = findViewById(R.id.htab_viewpager);
@@ -56,6 +55,7 @@ public class CommentsActivity extends AppCompatActivity{
         mTabLayout.setupWithViewPager(mViewPager);
     }
     private void loadImage(ImageView imageView){
+        imageView.setVisibility(View.VISIBLE);
         Glide.with(getApplicationContext()).load(mImage).into(imageView);
     }
     public Loader getLoader(){
@@ -63,7 +63,7 @@ public class CommentsActivity extends AppCompatActivity{
             mLoader = new Loader();
             mLoader.setmSubreddit(mSubreddit);
             mLoader.setmArticle(mArticle);
-
+            mLoader.setmPermalink(mPermalink);
         }
         return mLoader;
     }

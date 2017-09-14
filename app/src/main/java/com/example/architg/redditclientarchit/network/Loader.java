@@ -1,15 +1,14 @@
-package com.example.architg.redditclientarchit.Network;
+package com.example.architg.redditclientarchit.network;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.architg.redditclientarchit.Model.Info;
-import com.example.architg.redditclientarchit.Model.Root;
-import com.example.architg.redditclientarchit.Model.SubredditInfo;
-import com.example.architg.redditclientarchit.Model.SubredditListInfo;
+import com.example.architg.redditclientarchit.model.Info;
+import com.example.architg.redditclientarchit.model.Root;
+import com.example.architg.redditclientarchit.model.SubredditListInfo;
+import com.example.architg.redditclientarchit.model.SubredditSearchInfo;
 import com.google.common.util.concurrent.SettableFuture;
 
-import java.util.List;
 import java.util.concurrent.Future;
 
 import retrofit2.Call;
@@ -22,8 +21,19 @@ import retrofit2.Response;
 
 public class Loader {
     ApiInterface mApiInterface = ApiClient.getClient().create(ApiInterface.class);
-    private String mSubreddit = "happy";
-    private String mArticle = "6yze1g";
+    private String mSubreddit = "";
+    private String mArticle;
+    private String mPermalink;
+
+
+    public String getmPermalink() {
+        return mPermalink;
+    }
+
+    public void setmPermalink(String mPermalink) {
+        this.mPermalink = mPermalink;
+    }
+
 
     public String getmArticle() {
         return mArticle;
@@ -62,7 +72,7 @@ public class Loader {
         return future;
     }
 
-    public Future<SubredditListInfo> loadSubredditFilters(){
+    public Future<SubredditListInfo> loadSubredditFilters() {
         Call<SubredditListInfo> call = mApiInterface.getSubredditListInfo();
         final SettableFuture<SubredditListInfo> future = SettableFuture.create();
         call.enqueue(new Callback<SubredditListInfo>() {
@@ -72,12 +82,15 @@ public class Loader {
             }
 
             @Override
-            public void onFailure(Call<SubredditListInfo> call, Throwable t) {future.setException(t);}
+            public void onFailure(Call<SubredditListInfo> call, Throwable t) {
+                future.setException(t);
+            }
         });
         return future;
     }
-    public Future<Root> loadComments(String sortingCriteria){
-        Call<Root> call = mApiInterface.getCommentInfo(mSubreddit,mArticle,sortingCriteria);
+
+    public Future<Root> loadComments(String sortingCriteria) {
+        Call<Root> call = mApiInterface.getCommentInfo(mSubreddit, mArticle, sortingCriteria);
         final SettableFuture<Root> future = SettableFuture.create();
         call.enqueue(new Callback<Root>() {
             @Override
@@ -91,4 +104,37 @@ public class Loader {
         });
         return future;
     }
+
+    public Future<Root> loadHiddenComments(String url) {
+        String s = mPermalink + url;
+        Call<Root> call = mApiInterface.getHiddenCommentsInfo(s.substring(1));
+        final SettableFuture<Root> future = SettableFuture.create();
+        call.enqueue(new Callback<Root>() {
+            @Override
+            public void onResponse(Call<Root> call, Response<Root> response) {
+                future.set(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<Root> call, Throwable t) {}
+        });
+        return future;
+    }
+    public Future<SubredditSearchInfo> loadSubredditSEarchInfo(String subreddit){
+        Call<SubredditSearchInfo> call = mApiInterface.getSubredditSearchInfo(subreddit);
+        final SettableFuture<SubredditSearchInfo> future = SettableFuture.create();
+        call.enqueue(new Callback<SubredditSearchInfo>() {
+            @Override
+            public void onResponse(Call<SubredditSearchInfo> call, Response<SubredditSearchInfo> response) {
+                future.set(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<SubredditSearchInfo> call, Throwable t) {
+
+            }
+        });
+        return future;
+    }
+
 }

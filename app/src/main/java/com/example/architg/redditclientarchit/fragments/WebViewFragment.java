@@ -1,11 +1,10 @@
-package com.example.architg.redditclientarchit.Fragments;
+package com.example.architg.redditclientarchit.fragments;
 
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -16,7 +15,7 @@ import com.example.architg.redditclientarchit.R;
  * Created by archit.g on 31/08/17.
  */
 
-public class WebViewFragment extends DialogFragment{
+public class WebViewFragment extends BottomSheetDialogFragment {
     public static WebViewFragment getInstance(String url){
         WebViewFragment webViewFragment = new WebViewFragment();
         Bundle bundle = new Bundle();

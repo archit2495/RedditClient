@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Utility;
+package com.example.architg.redditclientarchit.utility;
 
 import java.util.Map;
 import java.util.NavigableMap;
@@ -8,7 +8,7 @@ import java.util.TreeMap;
  * Created by archit.g on 11/09/17.
  */
 
-public class Util {
+public class Utils {
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
     static {
         suffixes.put(1_000L, "k");

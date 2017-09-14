@@ -1,11 +1,10 @@
-package com.example.architg.redditclientarchit.Network;
+package com.example.architg.redditclientarchit.network;
 
-import com.example.architg.redditclientarchit.Model.Info;
-import com.example.architg.redditclientarchit.Model.Root;
-import com.example.architg.redditclientarchit.Model.SubredditInfo;
-import com.example.architg.redditclientarchit.Model.SubredditListInfo;
-
-import java.util.List;
+import com.example.architg.redditclientarchit.model.Info;
+import com.example.architg.redditclientarchit.model.Root;
+import com.example.architg.redditclientarchit.model.SubredditInfo;
+import com.example.architg.redditclientarchit.model.SubredditListInfo;
+import com.example.architg.redditclientarchit.model.SubredditSearchInfo;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -25,4 +24,8 @@ public interface ApiInterface {
     Call<SubredditListInfo> getSubredditListInfo();
     @GET("r/{subreddit}/comments/{article}.json")
     Call<Root> getCommentInfo(@Path("subreddit")String subreddit, @Path("article")String article, @Query("sort")String sortingCriteria);
+    @GET("{url}.json")
+    Call<Root> getHiddenCommentsInfo(@Path("url")String url);
+    @GET("r/{subreddit}/about.json")
+    Call<SubredditSearchInfo> getSubredditSearchInfo(@Path("subreddit")String subreddit);
 }

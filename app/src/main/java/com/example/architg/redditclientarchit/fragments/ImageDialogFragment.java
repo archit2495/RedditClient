@@ -1,22 +1,14 @@
-package com.example.architg.redditclientarchit.Fragments;
+package com.example.architg.redditclientarchit.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v4.app.DialogFragment;
-import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.example.architg.redditclientarchit.R;
 
 /**
@@ -42,7 +34,7 @@ public class ImageDialogFragment extends DialogFragment {
         final ImageView imageView = dialog.findViewById(R.id.image_view);
         final Context context = getContext();
         final ProgressBar progressBar = dialog.findViewById(R.id.progress);
-        Glide.with(context)
+        /*Glide.with(context)
                 .load(url)
                 .listener(new RequestListener<Drawable>() {
                     @Override
@@ -58,16 +50,17 @@ public class ImageDialogFragment extends DialogFragment {
                         return false;
                     }
                 })
-                .into(imageView);
+                .into(imageView);*/
         return dialog;
     }
     @Override
     public void onResume(){
         super.onResume();
-        DisplayMetrics displayMetrics = new DisplayMetrics();
+
+        /*DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
-        getDialog().getWindow().setLayout(width,height);
+        getDialog().getWindow().setLayout(width,height);*/
     }
 }

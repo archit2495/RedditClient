@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Network;
+package com.example.architg.redditclientarchit.network;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

@@ -1,8 +1,7 @@
-package com.example.architg.redditclientarchit.Model;
+package com.example.architg.redditclientarchit.model;
 
-import com.example.architg.redditclientarchit.Adapters.CommentsJsonAdapter;
+import com.example.architg.redditclientarchit.adapters.CommentsJsonAdapter;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 

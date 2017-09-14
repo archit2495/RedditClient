@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Fragments;
+package com.example.architg.redditclientarchit.fragments;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -10,12 +10,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-import com.example.architg.redditclientarchit.Activity.MainActivity;
-import com.example.architg.redditclientarchit.Adapters.SubredditDisplayAdapter;
-import com.example.architg.redditclientarchit.Model.SubredditListInfo;
-import com.example.architg.redditclientarchit.Network.ApiClient;
-import com.example.architg.redditclientarchit.Network.ApiInterface;
-import com.example.architg.redditclientarchit.Network.Loader;
+import com.example.architg.redditclientarchit.activity.MainActivity;
+import com.example.architg.redditclientarchit.adapters.SubredditDisplayAdapter;
+import com.example.architg.redditclientarchit.model.SubredditListInfo;
+import com.example.architg.redditclientarchit.network.Loader;
 import com.example.architg.redditclientarchit.R;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -23,11 +21,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.example.architg.redditclientarchit.Activity.MainActivity.bus;
+import static com.example.architg.redditclientarchit.activity.MainActivity.bus;
 
 /**
  * Created by archit.g on 01/09/17.

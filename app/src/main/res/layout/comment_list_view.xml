@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_300"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:scrollbars="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/root_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"></LinearLayout>
+        <com.github.silvestrpredko.dotprogressbar.DotProgressBar
+            android:id="@+id/dot_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_centerInParent="true"
+            custom:amount="3"
+            custom:animationDirection="right"
+            custom:duration="@android:integer/config_mediumAnimTime"
+            custom:endColor="#FF5a92"
+            custom:startColor="#FF0D5F" />
+    </RelativeLayout>
+</android.support.v4.widget.NestedScrollView>
+
+

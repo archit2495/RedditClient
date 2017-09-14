@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Activity;
+package com.example.architg.redditclientarchit.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -9,11 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import com.example.architg.redditclientarchit.Fragments.FeedFragment;
-import com.example.architg.redditclientarchit.Fragments.SubredditFilterFragment;
-import com.example.architg.redditclientarchit.Network.Loader;
+import com.example.architg.redditclientarchit.fragments.FeedFragment;
+import com.example.architg.redditclientarchit.fragments.SubredditFilterFragment;
+import com.example.architg.redditclientarchit.network.Loader;
 import com.example.architg.redditclientarchit.R;
-import com.example.architg.redditclientarchit.Utility.Utils;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 /**
@@ -38,7 +37,6 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Utils.initUtils(this);
         findViews();
         initViews();
         bindViews();

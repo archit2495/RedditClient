@@ -1,29 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swiperefresh"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/feed_recycler_view"
+        <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swiperefresh"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:scrollbars="vertical"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/feed_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="50dp"
+            android:layout_marginRight="10dp"
+            app:menu_fab_label="search"
+            app:menu_icon="@mipmap/ic_search"
+            fab:menu_animationDelayPerItem="50"
+            fab:menu_backgroundColor="@android:color/transparent"
+            fab:menu_buttonSpacing="0dp"
+            fab:menu_colorNormal="#FF0D5F"
+            fab:menu_colorPressed="#FF5a92"
+            fab:menu_colorRipple="#99FFFFFF"
+            fab:menu_fab_hide_animation="@anim/my_hide_animation"
+            fab:menu_fab_show_animation="@anim/my_show_animation"
+            fab:menu_fab_size="normal"
+            fab:menu_labels_colorNormal="#333333"
+            fab:menu_labels_colorPressed="#444444"
+            fab:menu_labels_colorRipple="#66FFFFFF"
+            fab:menu_labels_cornerRadius="3dp"
+            fab:menu_labels_ellipsize="none"
+            fab:menu_labels_hideAnimation="@anim/fab_slide_out_to_right"
+            fab:menu_labels_margin="0dp"
+            fab:menu_labels_maxLines="-1"
+            fab:menu_labels_padding="8dp"
+            fab:menu_labels_paddingBottom="4dp"
+            fab:menu_labels_paddingLeft="8dp"
+            fab:menu_labels_paddingRight="8dp"
+            fab:menu_labels_paddingTop="4dp"
+            fab:menu_labels_position="left"
+            fab:menu_labels_showAnimation="@anim/fab_slide_in_from_right"
+            fab:menu_labels_showShadow="true"
+            fab:menu_labels_singleLine="false"
+            fab:menu_labels_textColor="#FFFFFF"
+            fab:menu_labels_textSize="14sp"
+            fab:menu_openDirection="up"
+            fab:menu_shadowColor="#66000000"
+            fab:menu_shadowRadius="4dp"
+            fab:menu_shadowXOffset="1dp"
+            fab:menu_shadowYOffset="3dp"
+            fab:menu_showShadow="true"
+            app:layout_anchorGravity="bottom|right|end"
+            app:layout_behavior="com.example.architg.redditclientarchit.ScrollAwareBehaviorFAM">
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/post_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_search"
+                app:fab_label="post"
+                fab:fab_size="mini" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/subreddit_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_search"
+                app:fab_label="subreddit"
+                fab:fab_size="mini" />
+
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/user_search"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_search"
+                app:fab_label="user"
+                fab:fab_size="mini" />
+        </com.github.clans.fab.FloatingActionMenu>
+    </android.support.design.widget.CoordinatorLayout>
 
     <com.github.silvestrpredko.dotprogressbar.DotProgressBar
         android:id="@+id/dot_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
         android:layout_gravity="center"
         custom:amount="3"
-        custom:endColor="#FF5a92"
-        custom:startColor="#FF0D5F"
         custom:animationDirection="right"
-        android:layout_width="match_parent"
-        android:layout_height="25dp" />
+        custom:endColor="#FF5a92"
+        custom:startColor="#FF0D5F" />
 
 </FrameLayout>

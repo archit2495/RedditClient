@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Model;
+package com.example.architg.redditclientarchit.model;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -58,4 +58,6 @@ public class Post {
     private String url;
     @Getter
     private String id;
+    @Getter
+    private String permalink;
 }

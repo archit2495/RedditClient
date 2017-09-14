@@ -2,7 +2,7 @@ package com.example.architg.redditclientarchit;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import com.example.architg.redditclientarchit.Model.Info;
+import com.example.architg.redditclientarchit.model.Info;
 import com.google.gson.Gson;
 
 /**

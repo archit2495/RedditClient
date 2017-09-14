@@ -1,32 +1,36 @@
-package com.example.architg.redditclientarchit.Fragments;
+package com.example.architg.redditclientarchit.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.example.architg.redditclientarchit.Activity.MainActivity;
-import com.example.architg.redditclientarchit.Adapters.RedditPostListAdapter;
-import com.example.architg.redditclientarchit.Model.Info;
-import com.example.architg.redditclientarchit.Network.Loader;
+import com.example.architg.redditclientarchit.activity.MainActivity;
+import com.example.architg.redditclientarchit.activity.SearchActivity;
+import com.example.architg.redditclientarchit.adapters.RedditPostListAdapter;
+import com.example.architg.redditclientarchit.model.Info;
+import com.example.architg.redditclientarchit.network.Loader;
 import com.example.architg.redditclientarchit.R;
 import com.example.architg.redditclientarchit.RedditApplication;
+import com.github.clans.fab.FloatingActionButton;
 import com.github.silvestrpredko.dotprogressbar.DotProgressBar;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.squareup.otto.Subscribe;
-import java.util.List;
 
-import static com.example.architg.redditclientarchit.Activity.MainActivity.bus;
+import java.util.logging.Logger;
+
+import lombok.extern.java.Log;
+
+import static com.example.architg.redditclientarchit.activity.MainActivity.bus;
 
 public class FeedFragment extends Fragment implements RedditPostListAdapter.FragmentListener {
     String mType;
@@ -92,7 +96,15 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                     }
                 }
         );
-
+        FloatingActionButton postSearchButton = view.findViewById(R.id.post_search);
+        postSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                intent.putExtra("type","post");
+                getActivity().startActivity(intent);
+            }
+        });
     }
 
     public void updateView() {

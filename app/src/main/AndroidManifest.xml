@@ -13,19 +13,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".activity.MainActivity"
             android:screenOrientation="portrait">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter></activity>
-        <activity
-            android:name=".Activity.CommentsActivity"
-            android:screenOrientation="portrait">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-
+        <activity
+            android:name=".activity.CommentsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".activity.SearchActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"></action>
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@layout/searchable"/>
+        </activity>
 
     </application>
 </manifest>

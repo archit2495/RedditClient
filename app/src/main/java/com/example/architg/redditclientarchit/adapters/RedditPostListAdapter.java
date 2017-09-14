@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Adapters;
+package com.example.architg.redditclientarchit.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,10 +23,10 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
-import com.example.architg.redditclientarchit.Activity.CommentsActivity;
-import com.example.architg.redditclientarchit.Model.Info;
+import com.example.architg.redditclientarchit.activity.CommentsActivity;
+import com.example.architg.redditclientarchit.model.Info;
 import com.example.architg.redditclientarchit.R;
-import com.example.architg.redditclientarchit.Utility.Util;
+import com.example.architg.redditclientarchit.utility.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,12 +91,13 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
         feedViewHolder.heading.setText(feedResponse.getPost().getTitle());
         feedViewHolder.time.setText(DateUtils.getRelativeTimeSpanString(feedResponse.getPost().getCreated() * 1000l).toString());
         feedViewHolder.name.setText(feedResponse.getPost().getSubreddit_name_prefixed());
-        feedViewHolder.votes.setText(Util.format(feedResponse.getPost().getScore()) + " votes");
-        feedViewHolder.comments.setText(Util.format(feedResponse.getPost().getNum_comments()) + " comments");
+        feedViewHolder.votes.setText(Utils.format(feedResponse.getPost().getScore()) + " votes");
+        feedViewHolder.comments.setText(Utils.format(feedResponse.getPost().getNum_comments()) + " comments");
         feedViewHolder.comments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                launchCommentsActivity(feedResponse.getPost().getSubreddit_name_prefixed().substring(2),feedResponse.getPost().getId(),feedResponse.getPost().getPreview().getImageUrl());
+                String imageUrl=feedResponse.getPost().getPreview() == null?null:feedResponse.getPost().getPreview().getImageUrl();
+                launchCommentsActivity(feedResponse.getPost().getSubreddit_name_prefixed().substring(2),feedResponse.getPost().getId(), imageUrl,feedResponse.getPost().getPermalink(),feedResponse.getPost().getTitle());
             }
         });
         if (feedResponse.getPost() != null && feedResponse.getPost().getPreview() != null && feedResponse.getPost().getPreview().getImageUrl() != null) {
@@ -111,11 +112,13 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
             feedViewHolder.contentText.setText(Html.fromHtml(text));
         }
     }
-    private void launchCommentsActivity(String subreddit,String article,String image){
+    private void launchCommentsActivity(String subreddit,String article,String image,String permalink,String title){
         Intent intent = new Intent(mContext, CommentsActivity.class);
         intent.putExtra("subreddit",subreddit);
         intent.putExtra("article",article);
         intent.putExtra("image",image);
+        intent.putExtra("permalink",permalink);
+        intent.putExtra("title",title);
         mContext.startActivity(intent);
     }
     private void initPostHolder(FeedViewHolder feedViewHolder) {
@@ -129,7 +132,6 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     }
 
     private void loadImage(final ImageView imageView, final ProgressBar progressBar, final String url) {
-        Log.i("url", url);
         RequestOptions requestOptions = new RequestOptions()
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(mContext)

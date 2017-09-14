@@ -1,8 +1,8 @@
-package com.example.architg.redditclientarchit.Adapters;
+package com.example.architg.redditclientarchit.adapters;
 
 import android.util.Log;
 
-import com.example.architg.redditclientarchit.Model.Root;
+import com.example.architg.redditclientarchit.model.Root;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -23,8 +23,11 @@ public class CommentsJsonAdapter extends TypeAdapter<Root> {
 
     }
 
+    int cnt = 0;
     @Override
     public Root read(JsonReader in) throws IOException {
+        Log.i("index",cnt + "");
+        cnt++;
         List<Root.CommentInfo> commentInfos = new ArrayList<>();
         in.beginArray();
         for (int i = 0; i < 2; i++) {

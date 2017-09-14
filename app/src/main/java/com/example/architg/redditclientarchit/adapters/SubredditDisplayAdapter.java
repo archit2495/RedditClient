@@ -1,4 +1,4 @@
-package com.example.architg.redditclientarchit.Adapters;
+package com.example.architg.redditclientarchit.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
