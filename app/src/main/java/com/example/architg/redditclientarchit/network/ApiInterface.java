@@ -5,7 +5,10 @@ import com.example.architg.redditclientarchit.model.Root;
 import com.example.architg.redditclientarchit.model.SubredditInfo;
 import com.example.architg.redditclientarchit.model.SubredditListInfo;
 import com.example.architg.redditclientarchit.model.SubredditSearchInfo;
+import com.example.architg.redditclientarchit.model.TrophyInfo;
+import com.example.architg.redditclientarchit.model.UserInfo;
 
+import lombok.Getter;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -16,7 +19,7 @@ import retrofit2.http.Query;
  */
 
 public interface ApiInterface {
-    @GET("{subreddit}/{type}.json?limit=10")
+    @GET("{subreddit}/{type}.json?limit=15")
     Call<Info> getInfo(@Path("subreddit")String subreddit,@Path("type")String type,@Query("after") String afterID);
     @GET("/r/{type}/about.json")
     Call<SubredditInfo> getSubredditInfo(@Path("type") String type);
@@ -28,4 +31,10 @@ public interface ApiInterface {
     Call<Root> getHiddenCommentsInfo(@Path("url")String url);
     @GET("r/{subreddit}/about.json")
     Call<SubredditSearchInfo> getSubredditSearchInfo(@Path("subreddit")String subreddit);
+    @GET("user/{username}/about.json")
+    Call<UserInfo> getUserInfo(@Path("username")String username);
+    @GET("user/{username}/trophies.json")
+    Call<TrophyInfo> getTrophyInfo(@Path("username")String username);
+    @GET("search.json")
+    Call<Info> getFeedSearchInfo(@Query("q")String query,@Query("sort")String sortingCriteria,@Query("after")String after);
 }

@@ -3,9 +3,13 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/grey_300"
-    android:scrollbarAlwaysDrawVerticalTrack="true"
-    android:scrollbars="vertical">
+    app:fastScrollEnabled="true"
+    app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+    app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+    app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+    app:fastScrollVerticalTrackDrawable="@drawable/line_drawable">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -13,7 +17,7 @@
             android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical"/>
         <com.github.silvestrpredko.dotprogressbar.DotProgressBar
             android:id="@+id/dot_progress_bar"
             android:layout_width="match_parent"

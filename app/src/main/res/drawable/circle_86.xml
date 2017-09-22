@@ -3,12 +3,15 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:shape="oval">
      <stroke
-         android:color="@android:color/black"
+         android:color="@android:color/white"
          android:width="2dp"/>
+    <solid
+        android:color="@color/colorPrimary">
 
+    </solid>
      <size
-         android:width = "40dp"
-         android:height = "40dp"/>
+         android:width = "86dp"
+         android:height = "86dp"/>
 
 
     </shape>

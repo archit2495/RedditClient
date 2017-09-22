@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +22,9 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
+import com.example.architg.redditclientarchit.R;
 import com.example.architg.redditclientarchit.activity.CommentsActivity;
 import com.example.architg.redditclientarchit.model.Info;
-import com.example.architg.redditclientarchit.R;
 import com.example.architg.redditclientarchit.utility.Utils;
 
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     private FragmentListener fragmentListener;
 
     public class FeedViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, time, heading, contentText,votes,comments;
+        public TextView name, time, heading, contentText,votes,comments,share;
         public ImageView contentImage;
         public FrameLayout contentImageFrame;
         public ProgressBar contentImageProgress;
@@ -53,6 +52,7 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
             heading = view.findViewById(R.id.heading);
             votes = view.findViewById(R.id.upvoteCount);
             comments = view.findViewById(R.id.comments);
+            share = view.findViewById(R.id.share);
             contentImage = view.findViewById(R.id.contentImage);
             contentText = view.findViewById(R.id.contentText);
             contentImageFrame = view.findViewById(R.id.contentImageFrame);
@@ -100,6 +100,12 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                 launchCommentsActivity(feedResponse.getPost().getSubreddit_name_prefixed().substring(2),feedResponse.getPost().getId(), imageUrl,feedResponse.getPost().getPermalink(),feedResponse.getPost().getTitle());
             }
         });
+        feedViewHolder.share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               launchShareIntent(feedResponse.getPost().getUrl());
+            }
+        });
         if (feedResponse.getPost() != null && feedResponse.getPost().getPreview() != null && feedResponse.getPost().getPreview().getImageUrl() != null) {
             feedViewHolder.contentImageFrame.setVisibility(View.VISIBLE);
             loadImage(feedViewHolder.contentImage, feedViewHolder.contentImageProgress, feedResponse.getPost().getPreview().getImageUrl());
@@ -111,6 +117,12 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
             text = text.replaceAll("&gt;", ">");
             feedViewHolder.contentText.setText(Html.fromHtml(text));
         }
+    }
+    private void launchShareIntent(String text){
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT,text);
+        mContext.startActivity(Intent.createChooser(share, "Share using"));
     }
     private void launchCommentsActivity(String subreddit,String article,String image,String permalink,String title){
         Intent intent = new Intent(mContext, CommentsActivity.class);

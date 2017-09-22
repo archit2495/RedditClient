@@ -10,11 +10,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.example.architg.redditclientarchit.R;
 import com.example.architg.redditclientarchit.activity.MainActivity;
 import com.example.architg.redditclientarchit.adapters.SubredditDisplayAdapter;
+import com.example.architg.redditclientarchit.loaders.Loader;
 import com.example.architg.redditclientarchit.model.SubredditListInfo;
-import com.example.architg.redditclientarchit.network.Loader;
-import com.example.architg.redditclientarchit.R;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;

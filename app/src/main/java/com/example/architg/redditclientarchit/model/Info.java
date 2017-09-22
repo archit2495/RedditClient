@@ -15,7 +15,7 @@ public class Info {
     public class Data {
         public class FeedResponse {
             @SerializedName("data")
-            private Post post;
+            public Post post;
 
             public Post getPost() {
                 return post;
@@ -23,19 +23,19 @@ public class Info {
 
             @Getter
             @Setter
-            private String imageURL;
+            public String imageURL;
         }
 
         @Getter
         @SerializedName("children")
-        private List<FeedResponse> feedResponses;
+        public List<FeedResponse> feedResponses;
         @Getter
-        private String after;
+        public  String after;
 
     }
 
     @Getter
-    private Data data;
+    public Data data;
 
     public List<Data.FeedResponse> getFeedResponse() {
         return data.feedResponses;

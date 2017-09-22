@@ -16,7 +16,7 @@
             android:id="@+id/htab_collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="?attr/colorPrimary"
+            app:contentScrim="@color/colorPrimaryDark"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
@@ -28,13 +28,6 @@
                 android:layout_gravity="center"
                 android:transitionName="comment_transition"
                 app:layout_collapseMode="parallax">
-
-                <ImageView
-                    android:id="@+id/post_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"
-                    android:scaleType="centerCrop" />
 
                 <TextView
                     android:id="@+id/post_title"

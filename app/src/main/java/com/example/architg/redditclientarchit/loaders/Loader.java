@@ -1,12 +1,13 @@
-package com.example.architg.redditclientarchit.network;
+package com.example.architg.redditclientarchit.loaders;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.example.architg.redditclientarchit.model.Info;
 import com.example.architg.redditclientarchit.model.Root;
 import com.example.architg.redditclientarchit.model.SubredditListInfo;
 import com.example.architg.redditclientarchit.model.SubredditSearchInfo;
+import com.example.architg.redditclientarchit.network.ApiClient;
+import com.example.architg.redditclientarchit.network.ApiInterface;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.concurrent.Future;
@@ -120,7 +121,7 @@ public class Loader {
         });
         return future;
     }
-    public Future<SubredditSearchInfo> loadSubredditSEarchInfo(String subreddit){
+    public Future<SubredditSearchInfo> loadSubredditSearchInfo(String subreddit){
         Call<SubredditSearchInfo> call = mApiInterface.getSubredditSearchInfo(subreddit);
         final SettableFuture<SubredditSearchInfo> future = SettableFuture.create();
         call.enqueue(new Callback<SubredditSearchInfo>() {

@@ -26,7 +26,6 @@ public class CommentsJsonAdapter extends TypeAdapter<Root> {
     int cnt = 0;
     @Override
     public Root read(JsonReader in) throws IOException {
-        Log.i("index",cnt + "");
         cnt++;
         List<Root.CommentInfo> commentInfos = new ArrayList<>();
         in.beginArray();

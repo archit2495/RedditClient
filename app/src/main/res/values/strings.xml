@@ -3,4 +3,13 @@
     <string name="share">share</string>
     <string name="comments">Comments</string>
     <string name="vote">Vote</string>
+    <string name="post_karma">POST KARMA</string>
+    <string name="comment_karma">COMMENT KARMA</string>
+    <string name="trophy">TROPHY CASE</string>
+    <string name="search_string">Search Reddit</string>
+    <string name="recently_searched">RECENT SEARCHES</string>
+    <string name="no_results_found">No results found.</string>
+    <string name="network_error">We had some trouble connecting to reddit</string>
+    <string name="try_again">Try again</string>
+    <string name="frontpage">Frontpage</string>
 </resources>
