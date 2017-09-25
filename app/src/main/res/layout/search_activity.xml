@@ -19,13 +19,13 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
-
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:src="@mipmap/ic_arrow_back"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/search_layout"/>
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/search_layout"
@@ -37,36 +37,47 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center_vertical"
             android:layout_marginEnd="10dp">
             <ImageView
                 android:id="@+id/search_image"
-                android:layout_width="40dp"
+                android:layout_width="30dp"
+                android:layout_marginStart="2dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toRightOf="@+id/query"
+                android:src="@mipmap/ic_search"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:src="@mipmap/ic_search"
                 />
             <EditText
                 android:id="@+id/query"
-                android:layout_width="match_parent"
-                android:layout_marginRight="40dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_gravity="center_vertical"
+                android:imeOptions="actionSearch"
                 android:hint="@string/search_string"
                 android:inputType="textNoSuggestions"
+                android:background="@null"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/search_image"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:background="@null"/>
-
-          <!--  <android.support.v7.widget.SearchView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:queryHint="@string/search_string"
-                android:background="@color/white"
-                android:id="@+id/query"/>-->
+                app:layout_constraintLeft_toRightOf="@id/search_image"
+                tools:layout_editor_absoluteY="0dp"
+                tools:layout_editor_absoluteX="18dp" />
+            <ImageView
+                android:id="@+id/clear"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:visibility="gone"
+                android:layout_gravity="center_vertical|right"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@mipmap/ic_clear"
+                tools:layout_editor_absoluteY="0dp"
+                tools:layout_editor_absoluteX="0dp" />
 
         </android.support.constraint.ConstraintLayout>
     </android.support.constraint.ConstraintLayout>

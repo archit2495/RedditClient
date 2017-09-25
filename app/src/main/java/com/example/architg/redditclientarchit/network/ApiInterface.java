@@ -4,7 +4,7 @@ import com.example.architg.redditclientarchit.model.Info;
 import com.example.architg.redditclientarchit.model.Root;
 import com.example.architg.redditclientarchit.model.SubredditInfo;
 import com.example.architg.redditclientarchit.model.SubredditListInfo;
-import com.example.architg.redditclientarchit.model.SubredditSearchInfo;
+import com.example.architg.redditclientarchit.model.SubredditRoot;
 import com.example.architg.redditclientarchit.model.TrophyInfo;
 import com.example.architg.redditclientarchit.model.UserInfo;
 
@@ -29,8 +29,8 @@ public interface ApiInterface {
     Call<Root> getCommentInfo(@Path("subreddit")String subreddit, @Path("article")String article, @Query("sort")String sortingCriteria);
     @GET("{url}.json")
     Call<Root> getHiddenCommentsInfo(@Path("url")String url);
-    @GET("r/{subreddit}/about.json")
-    Call<SubredditSearchInfo> getSubredditSearchInfo(@Path("subreddit")String subreddit);
+    @GET("subreddits/search.json")
+    Call<SubredditRoot> getSubredditSearchInfo(@Query("q") String subreddit);
     @GET("user/{username}/about.json")
     Call<UserInfo> getUserInfo(@Path("username")String username);
     @GET("user/{username}/trophies.json")

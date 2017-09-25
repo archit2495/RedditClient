@@ -5,12 +5,13 @@ import android.support.annotation.NonNull;
 import com.example.architg.redditclientarchit.model.Info;
 import com.example.architg.redditclientarchit.model.Root;
 import com.example.architg.redditclientarchit.model.SubredditListInfo;
-import com.example.architg.redditclientarchit.model.SubredditSearchInfo;
+import com.example.architg.redditclientarchit.model.SubredditRoot;
 import com.example.architg.redditclientarchit.network.ApiClient;
 import com.example.architg.redditclientarchit.network.ApiInterface;
 import com.google.common.util.concurrent.SettableFuture;
 
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,7 +59,7 @@ public class Loader {
         call.enqueue(new Callback<Info>() {
             @Override
             public void onResponse(@NonNull Call<Info> call, @NonNull Response<Info> response) {
-                if (response.body() != null && response.body().getFeedResponse() != null && !response.body().getFeedResponse().isEmpty()) {
+                if (response.body() != null) {
                     future.set(response.body());
                 } else {
                     future.setException(new RuntimeException());
@@ -121,17 +122,17 @@ public class Loader {
         });
         return future;
     }
-    public Future<SubredditSearchInfo> loadSubredditSearchInfo(String subreddit){
-        Call<SubredditSearchInfo> call = mApiInterface.getSubredditSearchInfo(subreddit);
-        final SettableFuture<SubredditSearchInfo> future = SettableFuture.create();
-        call.enqueue(new Callback<SubredditSearchInfo>() {
+    public Future<SubredditRoot> loadSubredditSearchInfo(String subreddit){
+        Call<SubredditRoot> call = mApiInterface.getSubredditSearchInfo(subreddit);
+        final SettableFuture<SubredditRoot> future = SettableFuture.create();
+        call.enqueue(new Callback<SubredditRoot>() {
             @Override
-            public void onResponse(Call<SubredditSearchInfo> call, Response<SubredditSearchInfo> response) {
+            public void onResponse(Call<SubredditRoot> call, Response<SubredditRoot> response) {
                 future.set(response.body());
             }
 
             @Override
-            public void onFailure(Call<SubredditSearchInfo> call, Throwable t) {
+            public void onFailure(Call<SubredditRoot> call, Throwable t) {
 
             }
         });

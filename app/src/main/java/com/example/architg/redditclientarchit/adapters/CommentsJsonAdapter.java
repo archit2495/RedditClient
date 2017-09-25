@@ -110,7 +110,7 @@ public class CommentsJsonAdapter extends TypeAdapter<Root> {
                 data.created_utc = in.nextLong();
             } else if (name.equals("id")) {
                 data.id = in.nextString();
-            } else if (name.equals("children")) {
+            } /*else if (name.equals("children")) {
                 in.beginArray();
                 List<String> children = new ArrayList<>();
                 while (in.hasNext()) {
@@ -118,7 +118,7 @@ public class CommentsJsonAdapter extends TypeAdapter<Root> {
                 }
                 in.endArray();
                 data.children = children;
-            } else {
+            }*/ else {
                 in.skipValue();
             }
         }

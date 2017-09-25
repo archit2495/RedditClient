@@ -26,12 +26,14 @@ public class RedditApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Logger.getLogger("tyup").info("hello");
         mSharedPreferences = getApplicationContext().getSharedPreferences("MyPref",CONTEXT_RESTRICTED);
     }
     public void updateInfo(String mType,Info info){
         Gson gson = new Gson();
         String stringInfo = gson.toJson(info);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
+        Logger.getLogger("tyup").info(mSharedPreferences.getAll().size() + " size");
         editor.putString(mType, stringInfo);
         editor.commit();
     }
@@ -47,12 +49,12 @@ public class RedditApplication extends Application {
         String searchString = mSharedPreferences.getString("search",null);
         if(searchString == null){
             List<String> searches = new ArrayList<>();
-            searches.add(0,query);
+            searches.add(query);
             searchObject = new SearchObject();
             searchObject.searches = searches;
         }else{
             searchObject = gson.fromJson(searchString,SearchObject.class);
-            searchObject.searches.add(query);
+            searchObject.searches.add(0,query);
         }
         String searchInfo = gson.toJson(searchObject);
         SharedPreferences.Editor editor = mSharedPreferences.edit();

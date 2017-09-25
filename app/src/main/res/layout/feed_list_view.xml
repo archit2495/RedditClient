@@ -4,29 +4,27 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/grey_100"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/grey_100">
 
 
-
-        <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/swiperefresh"
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swiperefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical">
+        <!--<RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">-->
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/feed_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical">
-            <!--<RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">-->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/feed_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:fastScrollEnabled="true"
-                app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
-                app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
-                app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
-                app:fastScrollVerticalTrackDrawable="@drawable/line_drawable" />
-
+            app:fastScrollEnabled="true"
+            app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+            app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
+            app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
+            app:fastScrollVerticalTrackDrawable="@drawable/line_drawable" />
 
 
         <LinearLayout
@@ -40,32 +38,54 @@
             <ImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
-                android:paddingBottom="10dp"
                 android:layout_gravity="center"
-                android:src="@mipmap/ic_network"/>
+                android:paddingBottom="10dp"
+                android:src="@mipmap/ic_network" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
                 android:layout_gravity="center_horizontal"
+                android:paddingBottom="5dp"
                 android:text="@string/network_error" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/try_again" />
         </LinearLayout>
-</android.support.v4.widget.SwipeRefreshLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 
     <com.github.silvestrpredko.dotprogressbar.DotProgressBar
-        android:id="@+id/dot_progress_bar"
+    android:id="@+id/dot_progress_bar"
+    android:layout_width="match_parent"
+    android:layout_height="25dp"
+    android:layout_gravity="center"
+    custom:amount="3"
+    app:duration="250"
+    custom:animationDirection="right"
+    custom:endColor="@color/colorPrimary"
+    custom:startColor="@color/colorPrimary" />
+    <LinearLayout
+        android:id="@+id/no_results"
+        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
         android:layout_gravity="center"
-        custom:amount="3"
-        custom:animationDirection="right"
-        custom:endColor="#FF5a92"
-        custom:startColor="#FF0D5F" />
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_pets_black_48dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/empty"/>
+    </LinearLayout>
 
 </FrameLayout>

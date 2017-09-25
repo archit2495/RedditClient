@@ -40,6 +40,7 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
     lateinit var mDotProgressBar: DotProgressBar
     lateinit var errorTextView: TextView
     lateinit var mView: View
+    lateinit var noResults:View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mType = arguments.getString("type")
@@ -60,6 +61,7 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
         mRecyclerView = view!!.findViewById(R.id.feed_recycler_view)
         mLayoutManager = LinearLayoutManager(activity)
         mDotProgressBar = view.findViewById(R.id.dot_progress_bar)
+        noResults = view.findViewById(R.id.no_results)
         mProgress.setMessage("Please wait...")
         mProgress.setCancelable(false)
         mRecyclerView.layoutManager = mLayoutManager
@@ -78,7 +80,7 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
         if(mQuery != null)
         loadData()
         mSwipeRefreshLayout = view.findViewById(R.id.swiperefresh)
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent)
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary)
         mSwipeRefreshLayout.setOnRefreshListener { updateView() }
     }
 
@@ -99,17 +101,23 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
     }
 
     internal fun loadData() {
+        noResults.visibility = View.GONE
         Logger.getLogger("info")?.info(mQuery + " loadData")
         val loader = FeedSearchLoader()
         Futures.addCallback(loader.loadSearchFeed(mQuery, mType, after) as ListenableFuture<Info>,
                 object : FutureCallback<Info> {
                     override fun onSuccess(info: Info?) {
-                        mSwipeRefreshLayout.isRefreshing = false
-                        mProgress.dismiss()
-                        mIsLoading = false
-                        mDotProgressBar.visibility = View.GONE
-                        mRedditPostListAdapter.update(info!!.feedResponse)
-                        after = info.data.after
+                        if(info == null || info.feedResponse == null || info.feedResponse.size == 0){
+                            noResults.visibility = View.VISIBLE
+                            mDotProgressBar.visibility = View.GONE
+                        }else {
+                            mSwipeRefreshLayout.isRefreshing = false
+                            mProgress.dismiss()
+                            mIsLoading = false
+                            mDotProgressBar.visibility = View.GONE
+                            mRedditPostListAdapter.update(info.feedResponse)
+                            after = info.data.after
+                        }
                     }
 
                     override fun onFailure(t: Throwable) {
@@ -125,7 +133,7 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
     }
 
     internal fun isPageBeingLoaded(): Boolean? {
-        val totalItemCount = mRedditPostListAdapter.listSize
+        val totalItemCount = mRedditPostListAdapter.itemCount
         val pastVisibleItems = mLayoutManager.findLastVisibleItemPosition()
         return pastVisibleItems == totalItemCount - 1 && mIsLoading == false
     }

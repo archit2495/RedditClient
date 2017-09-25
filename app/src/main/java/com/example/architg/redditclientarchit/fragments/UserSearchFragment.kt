@@ -33,6 +33,8 @@ import java.util.logging.Logger
 class UserSearchFragment : Fragment() {
     var mQuery = ""
     val mLoader = UserInfoLoader()
+    lateinit var noResults:View
+    lateinit var userDetails:View
     lateinit var mView: View
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +44,14 @@ class UserSearchFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view: View = inflater?.inflate(R.layout.user_search, container, false) ?: return null
         mView = view
+        noResults = mView.findViewById(R.id.no_results)
+        noResults.visibility = View.GONE
+        userDetails = mView.findViewById(R.id.user_details)
         return mView
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(mQuery != null)
         loadUserData()
     }
 
@@ -62,11 +66,16 @@ class UserSearchFragment : Fragment() {
         loadUserData()
     }
     fun loadUserData() {
+        userDetails.visibility = View.VISIBLE
+        noResults.visibility = View.GONE
         addCallback(mLoader.getUserInfo(mQuery) as ListenableFuture<UserInfo>, object : FutureCallback<UserInfo> {
             override fun onSuccess(result: UserInfo?) {
-                if (result != null) {
+                if (result != null ) {
                     updateUserInfo(result)
                     loadTrophyData()
+                }else{
+                    userDetails.visibility = View.GONE
+                    noResults.visibility = View.VISIBLE
                 }
             }
 

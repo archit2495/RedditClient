@@ -27,10 +27,13 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.squareup.otto.Subscribe;
+import com.wang.avi.AVLoadingIndicatorView;
+
+import java.util.logging.Logger;
 
 import static com.example.architg.redditclientarchit.activity.MainActivity.bus;
 
-public class FeedFragment extends Fragment implements RedditPostListAdapter.FragmentListener {
+public class FeedFragment extends Fragment implements RedditPostListAdapter.FragmentListener,MainActivity.SubredditChangeListener{
     String mType;
     String after = "";
     RecyclerView mRecyclerView;
@@ -39,11 +42,11 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     Boolean mIsLoading = false;
     ProgressDialog mProgress;
     Loader mLoader;
-    String mSubreddit = "archit";
     SwipeRefreshLayout mSwipeRefreshLayout;
     DotProgressBar mDotProgressBar;
     LinearLayout errorLayout;
     View mView;
+    LinearLayout noResults;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,13 +55,15 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        bus.register(this);
         mView = inflater.inflate(R.layout.feed_list_view, container, false);
         mRedditPostListAdapter = new RedditPostListAdapter(getActivity(), FeedFragment.this);
         mLoader = ((MainActivity)getActivity()).getLoader();
         mProgress = new ProgressDialog(getActivity());
         errorLayout = mView.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
+        noResults = mView.findViewById(R.id.no_results);
+        noResults.setVisibility(View.GONE);
+        ((MainActivity)getActivity()).register(this);
         return mView;
     }
 
@@ -75,7 +80,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (isPageBeingLoaded()) {
+                if (isPageBeingLoaded() && (after != null) && (!after.equals(""))){
                     mProgress.show();
                     mIsLoading = true;
                     loadData();
@@ -83,11 +88,9 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
             }
         };
         mRecyclerView.addOnScrollListener(mScrollListener);
-        if (!mLoader.getmSubreddit().equals(mSubreddit)) {
-            updateView();
-        }
+     //   updateView();
         mSwipeRefreshLayout = view.findViewById(R.id.swiperefresh);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -101,16 +104,11 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     }
 
     public void updateView() {
+        noResults.setVisibility(View.GONE);
         mRedditPostListAdapter.flush();
         after = "";
+        Logger.getLogger("gtyu").info("in update view");
         loadData();
-    }
-
-    @Subscribe
-    public void getSubreddit(String subreddit) {
-        mSubreddit = subreddit;
-        mLoader.setmSubreddit(subreddit);
-        updateView();
     }
 
     public void showImageFragment(String url) {
@@ -124,23 +122,15 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     }
 
     Boolean isPageBeingLoaded() {
-        int totalItemCount = mRedditPostListAdapter.getListSize();
+        int totalItemCount = mRedditPostListAdapter.getItemCount();
         int pastVisibleItems = mLayoutManager.findLastVisibleItemPosition();
         if (pastVisibleItems == totalItemCount - 1 && !mIsLoading) {
             return true;
         }
         return false;
     }
-
-    @Override
-    public void onDestroyView() {
-        bus.unregister(this);
-        mSubreddit = "archit";
-        super.onDestroyView();
-    }
-
     void loadData() {
-        mSubreddit = mLoader.getmSubreddit();
+        Logger.getLogger("gty").info("load data " + mType + " type " + after + " after " + mLoader.getmSubreddit() + " subreddit");
         Futures.addCallback((ListenableFuture<Info>) mLoader.loadData(mType, after),
                 new FutureCallback<Info>() {
                     @Override
@@ -148,22 +138,32 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                         mSwipeRefreshLayout.setRefreshing(false);
                         mProgress.dismiss();
                         mIsLoading = false;
-                        RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
-                        redditApplication.updateInfo(mType,info);
-                        mDotProgressBar.setVisibility(View.GONE);
-                        mRedditPostListAdapter.update(info.getFeedResponse());
-                        after = info.getData().getAfter();
+                        if(info.getFeedResponse() == null || info.getFeedResponse().size() == 0){
+                            noResults.setVisibility(View.VISIBLE);
+                            mDotProgressBar.setVisibility(View.GONE);
+                        }else {
+                            noResults.setVisibility(View.GONE);
+                            RedditApplication redditApplication = (RedditApplication) getActivity().getApplicationContext();
+                            redditApplication.updateInfo(mLoader.getmSubreddit() + "/" + mType, info);
+                            Logger.getLogger("hgbn").info("adding " + mLoader.getmSubreddit() + "/" + mType);
+                            mDotProgressBar.setVisibility(View.GONE);
+                            mRedditPostListAdapter.update(info.getFeedResponse());
+                            after = info.getData().getAfter();
+                        }
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
+                        Logger.getLogger("jjfv").info(t.getMessage());
                         mSwipeRefreshLayout.setRefreshing(false);
                         mProgress.dismiss();
                         mIsLoading = false;
                         RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
                         mDotProgressBar.setVisibility(View.GONE);
-                        Info info = redditApplication.getInfo(mType);
+                        Logger.getLogger("hgbn").info("retrieving " + mLoader.getmSubreddit() + "/" + mType);
+                        Info info = redditApplication.getInfo(mLoader.getmSubreddit() + "/" + mType);
                         if(info == null){
+                            Logger.getLogger("hgbn").info("info null" + mLoader.getmSubreddit() + "/" + mType);
                             mSwipeRefreshLayout.setVisibility(View.GONE);
                             errorLayout.setVisibility(View.VISIBLE);
                         }else {

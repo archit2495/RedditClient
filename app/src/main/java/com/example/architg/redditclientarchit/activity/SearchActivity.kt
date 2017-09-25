@@ -1,7 +1,9 @@
 package com.example.architg.redditclientarchit.activity
 
+import android.content.Context
 import android.graphics.Color
 import android.media.Image
+import android.opengl.Visibility
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
@@ -14,8 +16,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.support.v7.widget.SearchView
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.webkit.RenderProcessGoneDetail
 import android.widget.ImageView
+import android.widget.TextView
 import com.example.architg.redditclientarchit.R
 import com.example.architg.redditclientarchit.RedditApplication
 import com.example.architg.redditclientarchit.fragments.RecentSearchesFragment
@@ -43,7 +50,23 @@ class SearchActivity : AppCompatActivity(), RecentSearchesFragment.listener {
         }
 
     }
-
+    fun clickEvent(){
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        if (editText.text != null && editText.text.toString().length > 0) {
+            (application as RedditApplication).updateSearch(editText.text.toString())
+            var fragment: Fragment = supportFragmentManager.findFragmentById(R.id.fragment_frame)
+            if (fragment is RecentSearchesFragment) {
+                val searchTabFragment = SearchTabFragment.getInstance(editText.text.toString())
+                val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
+                ft.replace(R.id.fragment_frame, searchTabFragment).commit()
+            } else {
+                var event = QueryChangedEvent()
+                event.message = editText.text.toString()
+                MainActivity.bus.post(event)
+            }
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_activity)
@@ -53,32 +76,37 @@ class SearchActivity : AppCompatActivity(), RecentSearchesFragment.listener {
         ft.add(R.id.fragment_frame, recentSearchesFragment).commit()
         editText = findViewById(R.id.query)
         val searchImage: ImageView = findViewById(R.id.search_image)
-        searchImage.setOnClickListener(object : View.OnClickListener {
+        val clearImage:ImageView = findViewById(R.id.clear)
+        clearImage.setOnClickListener(object:View.OnClickListener{
             override fun onClick(p0: View?) {
-                if (editText.text != null && editText.text.toString().length > 0) {
-                    var fragment: Fragment = supportFragmentManager.findFragmentById(R.id.fragment_frame)
-                    if (fragment is RecentSearchesFragment) {
-                        val searchTabFragment = SearchTabFragment.getInstance(editText.text.toString())
-                        val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
-                        ft.replace(R.id.fragment_frame, searchTabFragment).commit()
-                    } else {
-                        (application as RedditApplication).updateSearch(editText.text.toString())
-                        var event = QueryChangedEvent()
-                        event.message = editText.text.toString()
-                        MainActivity.bus.post(event)
-                    }
-                }
+                editText.text = Editable.Factory.getInstance().newEditable("")
             }
         })
+        searchImage.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(p0: View?) {
+               clickEvent()
+            }
+        })
+        editText.setOnEditorActionListener(TextView.OnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                clickEvent()
+                return@OnEditorActionListener true
+            }
+            false
+        })
+
         editText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (p0 != null && p0.length == 0) {
+                    clearImage.visibility = View.GONE
                     var fragment: Fragment = supportFragmentManager.findFragmentById(R.id.fragment_frame)
                     if (fragment is SearchTabFragment) {
                         val recentSearchesFragment = RecentSearchesFragment()
                         val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
                         ft.replace(R.id.fragment_frame, recentSearchesFragment).commit()
                     }
+                }else if(p0 != null){
+                    clearImage.visibility = View.VISIBLE
                 }
             }
 

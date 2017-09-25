@@ -19,7 +19,7 @@ import java.util.logging.Logger
  */
 class RecentSearchesFragment:Fragment(){
     lateinit var mView:View
-    lateinit var searches:List<String>
+    var searches:List<String> = ArrayList()
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view:View? = inflater?.inflate(R.layout.recently_searched_list_view,container,false)?:return null
         mView = view!!
@@ -28,9 +28,11 @@ class RecentSearchesFragment:Fragment(){
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searches = (activity.application as RedditApplication).searches
+        if((activity.application as RedditApplication).searches != null){
+            searches = (activity.application as RedditApplication).searches
+        }
         val recentSearchDisplayAdapter = RecentSearchDisplayAdapter(searches)
-        val listView = mView.findViewById<ListView>(R.id.search_list)
+        val listView:ListView = mView.findViewById(R.id.search_list)
         listView.adapter = recentSearchDisplayAdapter
         listView.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
             val search = searches.get(i)

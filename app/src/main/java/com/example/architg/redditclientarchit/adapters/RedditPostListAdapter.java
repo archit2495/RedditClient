@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -29,6 +30,7 @@ import com.example.architg.redditclientarchit.utility.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by archit.g on 11/08/17.
@@ -106,6 +108,13 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
                launchShareIntent(feedResponse.getPost().getUrl());
             }
         });
+        feedViewHolder.votes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(mContext,"You must be logged in to vote.",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
         if (feedResponse.getPost() != null && feedResponse.getPost().getPreview() != null && feedResponse.getPost().getPreview().getImageUrl() != null) {
             feedViewHolder.contentImageFrame.setVisibility(View.VISIBLE);
             loadImage(feedViewHolder.contentImage, feedViewHolder.contentImageProgress, feedResponse.getPost().getPreview().getImageUrl());
@@ -168,23 +177,31 @@ public class RedditPostListAdapter extends RecyclerView.Adapter<RedditPostListAd
     }
 
 
-    public int update(List<Info.Data.FeedResponse> feedResponses) {
-        int start = mFeedResponses.size();
-        for (int i = 0; i < feedResponses.size(); i++) {                       //ask about adding in front of the list
+    public void update(List<Info.Data.FeedResponse> feedResponses) {
+        if(feedResponses == null){
+            return;
+        }
+        /*int start = mFeedResponses.size();
+        for (int i = 0; i < feedResponses.size(); i++) {
             mFeedResponses.add(feedResponses.get(i));
         }
         notifyItemRangeChanged(start, feedResponses.size());
-        return start;
+        return start;*/
+        mFeedResponses.addAll(feedResponses);
+        notifyDataSetChanged();
     }
 
     public void flush() {
-        if (mFeedResponses != null)
+        if (mFeedResponses != null) {
+            Logger.getLogger("gtyr").info("flush called");
+            for(int i = 0;i < mFeedResponses.size();i++){
+                Logger.getLogger("gtyr").info(mFeedResponses.get(i).getPost().getTitle());
+            }
             mFeedResponses.clear();
+            notifyDataSetChanged();
+        }
     }
 
-    public int getListSize() {
-        return mFeedResponses.size();
-    }
 
     public Info.Data.FeedResponse getItem(int position) {
         return mFeedResponses.get(position);

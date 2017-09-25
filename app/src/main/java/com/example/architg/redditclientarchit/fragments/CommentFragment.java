@@ -118,7 +118,7 @@ public class CommentFragment extends Fragment {
         for (int i = 0; i < commentInfo.getInfoData().getComments().size(); i++) {
             final Root.CommentInfo.InfoData.Comment comment = commentInfo.getInfoData().getComments().get(i);
             if (comment.getKind() != null && comment.getKind().equals("more")){
-                for (int j = 0; j < comment.getData().children.size(); j++) {
+                /*for (int j = 0; j < comment.getData().children.size(); j++) {
                     final TextView textView = (TextView) LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.load_more, layout, false);
                     final int position = j;
                     textView.setOnClickListener(new View.OnClickListener() {
@@ -134,9 +134,23 @@ public class CommentFragment extends Fragment {
                             layout.addView(textView);
                         }
                     });
-                }
+                }*/
+                final TextView textView = (TextView) LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.load_more, layout, false);
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        loadHiddenCommentsData(comment.getData().id, textView,padding,colorIndex);
+                    }
+                });
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        layout.addView(textView);
+                    }
+                });
             }else{
-                final LinearLayout linearLayout = getSingleItemView(comment,padding,colorIndex);
+                final LinearLayout linearLayout = getSingleItemView(layout,comment,padding,colorIndex);
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -144,17 +158,17 @@ public class CommentFragment extends Fragment {
                     }
                 });
                 if (comment.getData() != null && comment.getData().getReplies() != null) {
-                    commentInfoToView(comment.getData().getReplies(), linearLayout, padding + 5, colorIndex + 1);
+                    commentInfoToView(comment.getData().getReplies(), linearLayout, 10, colorIndex + 1);
                 }
             }
         }
     }
 
-    public LinearLayout getSingleItemView(Root.CommentInfo.InfoData.Comment comment, int padding, int colorIndex) {
+    public LinearLayout getSingleItemView(ViewGroup parent,Root.CommentInfo.InfoData.Comment comment, int padding, int colorIndex) {
         if(comment.getData() == null){
             return null;
         }
-        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.comment_single_item, null, false);
+        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(getActivity().getApplicationContext()).inflate(R.layout.comment_single_item, parent, false);
         View line = linearLayout.findViewById(R.id.line);
         line.setBackgroundColor(Color.parseColor(colors.get(colorIndex % 10)));
         LinearLayout commentLayout = linearLayout.findViewById(R.id.comment);
@@ -162,9 +176,9 @@ public class CommentFragment extends Fragment {
         TextView author = linearLayout.findViewById(R.id.author);
         author.setText(comment.getData().author);
         TextView score = linearLayout.findViewById(R.id.score);
-        score.setText("\u2022"+ comment.getData().ups + " points");
+        score.setText("\u2022 "+ comment.getData().ups + " points");
         TextView time = linearLayout.findViewById(R.id.time);
-        time.setText("\u2022" +DateUtils.getRelativeTimeSpanString(comment.getData().created_utc * 1000l).toString());
+        time.setText("\u2022 " +DateUtils.getRelativeTimeSpanString(comment.getData().created_utc * 1000l).toString());
         TextView commentText = linearLayout.findViewById(R.id.comment_text);
         String text = comment.getData().body_html;
         text = text.replaceAll("&lt;", "<");

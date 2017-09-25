@@ -26,8 +26,8 @@
             custom:amount="3"
             custom:animationDirection="right"
             custom:duration="@android:integer/config_mediumAnimTime"
-            custom:endColor="#FF5a92"
-            custom:startColor="#FF0D5F" />
+            custom:endColor="@color/colorPrimary"
+            custom:startColor="@color/colorPrimary" />
     </RelativeLayout>
 </android.support.v4.widget.NestedScrollView>
 

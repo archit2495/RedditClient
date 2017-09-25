@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -47,7 +48,18 @@ public class CommentsActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.post_title);
         textView.setVisibility(View.VISIBLE);
         textView.setText(mTitle);
+        Toolbar toolbar = findViewById(R.id.htab_toolbar);
+        setSupportActionBar(toolbar);
 
+        toolbar.setNavigationIcon(R.mipmap.ic_arrow_back_white_24dp);
+        getSupportActionBar().setTitle("");
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                onBackPressed();
+            }
+        });
         //loadData();
         CommentsActivity.ViewPagerAdapter adapter = new CommentsActivity.ViewPagerAdapter(getSupportFragmentManager(), CommentsActivity.SortingCriteria.values());
         ViewPager mViewPager = findViewById(R.id.htab_viewpager);

@@ -30,7 +30,7 @@
                 android:paddingRight="10dp"
                 android:text="heading"
                 android:textColor="@android:color/black"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:typeface="serif"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -125,7 +125,7 @@
                     android:drawablePadding="5dp"
                     android:maxLines="1"
                     android:text="2.8k votes"
-                    android:textColor="#ff4081"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
 
                <View
@@ -147,7 +147,7 @@
                     android:drawablePadding="5dp"
                     android:maxLines="1"
                     android:text="283 Comments"
-                    android:textColor="#ff4081"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
                 <View
                     android:id="@+id/vertical_separator_2"
@@ -166,7 +166,7 @@
                     android:drawablePadding="5dp"
                     android:maxLines="1"
                     android:text="@string/share"
-                    android:textColor="#ff4081"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="14sp" />
                 <!--<View
                     android:id="@+id/vertical_separator_2"
