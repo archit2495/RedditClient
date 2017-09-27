@@ -117,8 +117,10 @@ class SubredditSearchFragment : Fragment(), SubredditClickListener {
             return
         }
         val intent = Intent(activity, MainActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         intent.putExtra("subreddit", "r/" + subreddit)
         activity.startActivity(intent)
+        activity.finish()
     }
 
     companion object {

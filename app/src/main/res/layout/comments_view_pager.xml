@@ -4,13 +4,13 @@
     android:id="@+id/htab_maincontent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    >
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/htab_appbar"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:fitsSystemWindows="true">
+        >
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/htab_collapse_toolbar"
@@ -19,7 +19,7 @@
             app:contentScrim="@color/colorPrimaryDark"
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:statusBarScrim="?attr/colorPrimaryDark">
 
             <RelativeLayout

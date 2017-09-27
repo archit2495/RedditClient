@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.example.architg.redditclientarchit.R
 import com.example.architg.redditclientarchit.activity.MainActivity
@@ -20,7 +21,6 @@ import com.github.silvestrpredko.dotprogressbar.DotProgressBar
 import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
-import com.squareup.otto.Bus
 import com.squareup.otto.Subscribe
 import java.util.logging.Logger
 
@@ -35,25 +35,28 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
     lateinit var mLayoutManager: LinearLayoutManager
     lateinit var mRedditPostListAdapter: RedditPostListAdapter
     var mIsLoading: Boolean? = false
-    lateinit var mProgress: ProgressDialog
+    lateinit var mProgress: ProgressBar
     lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
     lateinit var mDotProgressBar: DotProgressBar
     lateinit var errorTextView: TextView
     lateinit var mView: View
     lateinit var noResults:View
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mType = arguments.getString("type")
         mQuery = arguments.getString("query")
-        MainActivity.bus.register(this)
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater?.inflate(R.layout.feed_list_view, container, false)!!
         mRedditPostListAdapter = RedditPostListAdapter(activity, this)
-        mProgress = ProgressDialog(activity)
+        mProgress = mView.findViewById(R.id.progress)
     //    errorTextView = mView.findViewById(R.id.error)
     //    errorTextView.visibility = View.GONE
+        MainActivity.bus.register(this)
         return mView
     }
 
@@ -62,15 +65,13 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
         mLayoutManager = LinearLayoutManager(activity)
         mDotProgressBar = view.findViewById(R.id.dot_progress_bar)
         noResults = view.findViewById(R.id.no_results)
-        mProgress.setMessage("Please wait...")
-        mProgress.setCancelable(false)
         mRecyclerView.layoutManager = mLayoutManager
         mRecyclerView.adapter = mRedditPostListAdapter
         val mScrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (isPageBeingLoaded()!!) {
-                    mProgress.show()
+                    mProgress.visibility = View.VISIBLE
                     mIsLoading = true
                     loadData()
                 }
@@ -86,7 +87,6 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        MainActivity.bus.unregister(this)
     }
     @Subscribe
     fun query(query: QueryChangedEvent){
@@ -112,17 +112,18 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
                             mDotProgressBar.visibility = View.GONE
                         }else {
                             mSwipeRefreshLayout.isRefreshing = false
-                            mProgress.dismiss()
+                            mProgress.visibility = View.GONE
                             mIsLoading = false
                             mDotProgressBar.visibility = View.GONE
                             mRedditPostListAdapter.update(info.feedResponse)
+                            if(info.data != null && info.data.after != null)
                             after = info.data.after
                         }
                     }
 
                     override fun onFailure(t: Throwable) {
                         mSwipeRefreshLayout.isRefreshing = false
-                        mProgress.dismiss()
+                        mProgress.visibility = View.GONE
                         mIsLoading = false
                         mDotProgressBar.visibility = View.GONE
                         mSwipeRefreshLayout.visibility = View.GONE
@@ -157,6 +158,11 @@ class PostSearchFragment : Fragment(), RedditPostListAdapter.FragmentListener {
             feedSearchFragment.arguments = bundle
             return feedSearchFragment
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        MainActivity.bus.unregister(this)
     }
 
 }

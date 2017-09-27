@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.architg.redditclientarchit.R;
@@ -40,11 +41,10 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
     LinearLayoutManager mLayoutManager;
     RedditPostListAdapter mRedditPostListAdapter;
     Boolean mIsLoading = false;
-    ProgressDialog mProgress;
+    ProgressBar mProgress;
     Loader mLoader;
     SwipeRefreshLayout mSwipeRefreshLayout;
     DotProgressBar mDotProgressBar;
-    LinearLayout errorLayout;
     View mView;
     LinearLayout noResults;
     @Override
@@ -58,9 +58,6 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
         mView = inflater.inflate(R.layout.feed_list_view, container, false);
         mRedditPostListAdapter = new RedditPostListAdapter(getActivity(), FeedFragment.this);
         mLoader = ((MainActivity)getActivity()).getLoader();
-        mProgress = new ProgressDialog(getActivity());
-        errorLayout = mView.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
         noResults = mView.findViewById(R.id.no_results);
         noResults.setVisibility(View.GONE);
         ((MainActivity)getActivity()).register(this);
@@ -72,8 +69,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
         mRecyclerView = view.findViewById(R.id.feed_recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mDotProgressBar = view.findViewById(R.id.dot_progress_bar);
-        mProgress.setMessage("Please wait...");
-        mProgress.setCancelable(false);
+        mProgress = view.findViewById(R.id.progress);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mRedditPostListAdapter);
         RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
@@ -81,7 +77,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 if (isPageBeingLoaded() && (after != null) && (!after.equals(""))){
-                    mProgress.show();
+                    mProgress.setVisibility(View.VISIBLE);
                     mIsLoading = true;
                     loadData();
                 }
@@ -95,7 +91,6 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        errorLayout.setVisibility(View.GONE);
                         updateView();
                     }
                 }
@@ -107,6 +102,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
         noResults.setVisibility(View.GONE);
         mRedditPostListAdapter.flush();
         after = "";
+        mDotProgressBar.setVisibility(View.VISIBLE);
         Logger.getLogger("gtyu").info("in update view");
         loadData();
     }
@@ -136,7 +132,7 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                     @Override
                     public void onSuccess(Info info) {
                         mSwipeRefreshLayout.setRefreshing(false);
-                        mProgress.dismiss();
+                        mProgress.setVisibility(View.GONE);
                         mIsLoading = false;
                         if(info.getFeedResponse() == null || info.getFeedResponse().size() == 0){
                             noResults.setVisibility(View.VISIBLE);
@@ -144,8 +140,8 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
                         }else {
                             noResults.setVisibility(View.GONE);
                             RedditApplication redditApplication = (RedditApplication) getActivity().getApplicationContext();
+                            Logger.getLogger("basic").info(mLoader.getmSubreddit() + " " + mType);
                             redditApplication.updateInfo(mLoader.getmSubreddit() + "/" + mType, info);
-                            Logger.getLogger("hgbn").info("adding " + mLoader.getmSubreddit() + "/" + mType);
                             mDotProgressBar.setVisibility(View.GONE);
                             mRedditPostListAdapter.update(info.getFeedResponse());
                             after = info.getData().getAfter();
@@ -154,18 +150,15 @@ public class FeedFragment extends Fragment implements RedditPostListAdapter.Frag
 
                     @Override
                     public void onFailure(Throwable t) {
-                        Logger.getLogger("jjfv").info(t.getMessage());
                         mSwipeRefreshLayout.setRefreshing(false);
-                        mProgress.dismiss();
+                        mProgress.setVisibility(View.GONE);
                         mIsLoading = false;
+                        Logger.getLogger("fail").info(mLoader.getmSubreddit() + " " + mType);
                         RedditApplication redditApplication = (RedditApplication)getActivity().getApplicationContext();
                         mDotProgressBar.setVisibility(View.GONE);
-                        Logger.getLogger("hgbn").info("retrieving " + mLoader.getmSubreddit() + "/" + mType);
                         Info info = redditApplication.getInfo(mLoader.getmSubreddit() + "/" + mType);
                         if(info == null){
-                            Logger.getLogger("hgbn").info("info null" + mLoader.getmSubreddit() + "/" + mType);
-                            mSwipeRefreshLayout.setVisibility(View.GONE);
-                            errorLayout.setVisibility(View.VISIBLE);
+                            noResults.setVisibility(View.VISIBLE);
                         }else {
                             mRedditPostListAdapter.update(info.getFeedResponse());
                         }

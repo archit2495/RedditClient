@@ -64,16 +64,14 @@ public class MainActivity extends AppCompatActivity {
     private SubredditDisplayAdapter subredditAdapter;
     private String enteredSubreddit = "";
 
+
+    static {
+        bus = new Bus(ThreadEnforcer.ANY);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
-        Intent intent = getIntent();
-        if(intent != null) {
-            Bundle bundle = intent.getExtras();
-            if(bundle != null)
-            mSubreddit = bundle.getString("subreddit", "r/FrontPage");
-        }
         setContentView(R.layout.activity_main);
         initViews();
         initSubredditSpinner();
@@ -81,9 +79,16 @@ public class MainActivity extends AppCompatActivity {
         bindViews();
         mViewPager.setOffscreenPageLimit(5);
         loadData();
-        bus = new Bus(ThreadEnforcer.ANY);
     }
-
+    @Override
+    protected void onNewIntent(Intent intent){
+        super.onNewIntent(intent);
+        if(intent != null && intent.getExtras() != null){
+            mSubreddit = intent.getExtras().getString("subreddit","r/FrontPage");
+            initSubredditSpinner();
+            loadData();
+        }
+    }
     public void register(SubredditChangeListener subredditChangeListener) {
         listeners.add(subredditChangeListener);
         Logger.getLogger("kdvnfkd").info(listeners.size() + " size");

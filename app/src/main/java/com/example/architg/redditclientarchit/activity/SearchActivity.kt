@@ -33,9 +33,6 @@ import com.squareup.otto.Bus
 import com.squareup.otto.ThreadEnforcer
 import java.util.logging.Logger
 
-/**
- * Created by archit.g on 14/09/17.
- */
 class SearchActivity : AppCompatActivity(), RecentSearchesFragment.listener {
 
     val mLoader: Loader = Loader()
@@ -43,6 +40,8 @@ class SearchActivity : AppCompatActivity(), RecentSearchesFragment.listener {
     override fun onSearchStringSelected(query: String) {
         editText.setText("")
         editText.append(query)
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(editText.getWindowToken(), 0)
         if (query.length > 0) {
             val searchTabFragment = SearchTabFragment.getInstance(editText!!.text.toString())
             val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
@@ -70,7 +69,7 @@ class SearchActivity : AppCompatActivity(), RecentSearchesFragment.listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_activity)
-        MainActivity.bus.register(this)
+      //  MainActivity.bus.register(this)
         val recentSearchesFragment = RecentSearchesFragment()
         val ft: FragmentTransaction = supportFragmentManager.beginTransaction()
         ft.add(R.id.fragment_frame, recentSearchesFragment).commit()
@@ -126,7 +125,7 @@ class SearchActivity : AppCompatActivity(), RecentSearchesFragment.listener {
 
     override fun onDestroy() {
         super.onDestroy()
-        MainActivity.bus.unregister(this)
+    //    MainActivity.bus.unregister(this)
     }
 
 

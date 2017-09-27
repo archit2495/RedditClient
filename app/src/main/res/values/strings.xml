@@ -12,5 +12,5 @@
     <string name="network_error">We had some trouble connecting to reddit</string>
     <string name="try_again">Try again</string>
     <string name="frontpage">Frontpage</string>
-    <string name="empty">Wow,such empty!</string>
+    <string name="empty">Such empty, much wow!</string>
 </resources>

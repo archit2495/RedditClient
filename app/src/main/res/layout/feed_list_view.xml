@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,10 +8,21 @@
     android:background="@color/grey_100">
 
 
+    <com.github.silvestrpredko.dotprogressbar.DotProgressBar
+        android:id="@+id/dot_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_centerInParent="true"
+        app:duration="250"
+        custom:amount="3"
+        custom:animationDirection="right"
+        custom:endColor="@color/colorPrimary"
+        custom:startColor="@color/colorPrimary" />
     <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/progress"
         android:scrollbars="vertical">
         <!--<RelativeLayout
             android:layout_width="match_parent"
@@ -19,73 +30,36 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/feed_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:fastScrollEnabled="true"
             app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
             app:fastScrollHorizontalTrackDrawable="@drawable/line_drawable"
             app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"
             app:fastScrollVerticalTrackDrawable="@drawable/line_drawable" />
 
-
-        <LinearLayout
-            android:id="@+id/error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_gravity="center"
-                android:paddingBottom="10dp"
-                android:src="@mipmap/ic_network" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="5dp"
-                android:text="@string/network_error" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="@string/try_again" />
-        </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 
-    <com.github.silvestrpredko.dotprogressbar.DotProgressBar
-    android:id="@+id/dot_progress_bar"
-    android:layout_width="match_parent"
-    android:layout_height="25dp"
-    android:layout_gravity="center"
-    custom:amount="3"
-    app:duration="250"
-    custom:animationDirection="right"
-    custom:endColor="@color/colorPrimary"
-    custom:startColor="@color/colorPrimary" />
     <LinearLayout
         android:id="@+id/no_results"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:visibility="gone">
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@mipmap/ic_pets_black_48dp"/>
+            android:src="@mipmap/ic_pets_black_48dp" />
+
         <TextView
             android:layout_width="wrap_content"
-            android:layout_marginTop="20dp"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:text="@string/empty"/>
+            android:layout_marginTop="20dp"
+            android:text="@string/empty"
+            android:textSize="20sp" />
     </LinearLayout>
 
-</FrameLayout>
+</RelativeLayout>
